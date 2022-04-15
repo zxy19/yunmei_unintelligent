@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".lockInfoActivity">
+
+    <TextView
+        android:id="@+id/ttitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="76dp"
+        android:text="用户和门锁信息"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/info"
+        android:layout_width="368dp"
+        android:layout_height="579dp"
+        android:duplicateParentState="false"
+        android:editable="false"
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/space2"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Space
+        android:id="@+id/space2"
+        android:layout_width="433dp"
+        android:layout_height="33dp"
+        app:layout_constraintTop_toBottomOf="@+id/ttitle"
+        tools:layout_editor_absoluteX="92dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
