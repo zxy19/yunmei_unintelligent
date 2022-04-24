@@ -16,7 +16,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.6" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_login"
@@ -44,12 +45,14 @@
 
     <cc.xypp.yunmei.wigets.CircleProgress
         android:id="@+id/circleProgress"
-        android:layout_width="235dp"
-        android:layout_height="287dp"
+        android:layout_width="238dp"
+        android:layout_height="261dp"
         app:layout_constraintBottom_toTopOf="@+id/btn_unlock"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.619" />
 
     <Button
         android:id="@+id/btn_sign"
@@ -62,5 +65,14 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_unlock" />
+
+    <TextView
+        android:id="@+id/tip_f"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="该软件仅供学习目的，请勿用于非法目的。点击加号可以登录"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,6 +7,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
@@ -89,6 +90,18 @@ public class MainActivity extends AppCompatActivity {
         circ = findViewById(R.id.circleProgress);
         setPss(0,"等待开始");
         if(atco)new Thread(this::openDoorPss).start();
+        String quick = getIntent().getAction();
+        if(quick!=null){
+            if(quick.equals("cc.xypp.yunmei.unlock")){
+                new Thread(this::openDoorPss).start();
+            }else if(quick.equals("cc.xypp.yunmei.sign")){
+                signEve();
+            }
+        }
+
+        if(!Uname.equals("")){
+            findViewById(R.id.tip_f).setVisibility(View.INVISIBLE);
+        }
     }
     void setPss(int pss,String tip){
         setPss(pss,tip,false);
@@ -112,14 +125,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openDoorClick(View view) {
-        qkcn=sp.getBoolean("quickCon",true);
-        disableBtn(true);
         new Thread(this::openDoorPss).start();
     }
     public void clickSign(View view){
-        Uname = sp.getString("loginUsr","");
-        Upsw = sp.getString("loginPsw","");
-        disableBtn(true);
         signEve();
     }
     private void toast(String tip) {
@@ -138,6 +146,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private void openDoorPss() {
+        qkcn=sp.getBoolean("quickCon",true);
+        disableBtn(true);
         noLocalMac=!qkcn;
         D_Mac = sp.getString("LMAC", "");
         D_SERV = sp.getString("SUUID", "");
@@ -165,6 +175,21 @@ public class MainActivity extends AppCompatActivity {
                 setPss(10,"申请权限");
                 ActivityCompat.requestPermissions(this, denyPermissions.toArray(new String[denyPermissions.size()]), 105);
                 return;
+            }
+        }
+        BluetoothAdapter blueadapter= BluetoothAdapter.getDefaultAdapter();
+        if(!blueadapter.isEnabled()){
+            setPss(13,"开启蓝牙...");
+            if(!blueadapter.enable()) {
+                setPss(0, "蓝牙没有启用", true);
+                disableBtn(false);
+                return;
+            }
+            setPss(15,"等待蓝牙...");
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
         if (!D_Mac.equals("") && !noLocalMac){
@@ -349,6 +374,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void signEve(){
+        Uname = sp.getString("loginUsr","");
+        Upsw = sp.getString("loginPsw","");
+        disableBtn(true);
         Thread sigWork = new Thread(this::signWork);
         String lstLoca = sp.getString("lstLoca","不存在");
         switch (sp.getString("sigLoc","ask")){

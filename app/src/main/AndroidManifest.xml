@@ -32,9 +32,12 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <action android:name="cc.xypp.yunmei.unlock" />
+                <action android:name="cc.xypp.yunmei.sign" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
     </application>
 

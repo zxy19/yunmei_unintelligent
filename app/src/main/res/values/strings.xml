@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">云梅不智能</string>
+    <string name="unlockShortCutDisabled">开锁功能目前不可用</string>
+    <string name="unlockShortCut">开锁</string>
+    <string name="signShortCutDisabled">签到功能目前不可用</string>
+    <string name="signShortCut">签到</string>
 </resources>

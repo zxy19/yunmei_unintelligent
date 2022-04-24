@@ -25,7 +25,7 @@ public class CircleProgress extends View {
     private RectF _rectF;
     private Rect _rect;
     private int _max = 100;
-    private double targetV = 1,_current = 1;
+    private double targetV = 0,_current = 0;
     //圆弧（也可以说是圆环）的宽度
     private float _arcWidth = 30;
     //控件的宽度
