@@ -23,13 +23,16 @@ public class settingActivity extends AppCompatActivity {
         ((Switch)findViewById(R.id.autoConn)).setChecked(sp.getBoolean("autoCon",false));
         switch (sp.getString("sigLoc","ask")){
             case "ask":
-                ((RadioButton)findViewById(R.id.sigLocOpt_ask)).setChecked(true);
+                ((RadioButton)findViewById(R.id.sigLocOpt_ask)).setChecked(true);break;
             case "rel":
-                ((RadioButton)findViewById(R.id.sigLocOpt_rel)).setChecked(true);
+                ((RadioButton)findViewById(R.id.sigLocOpt_rel)).setChecked(true);break;
             case "lst":
-                ((RadioButton)findViewById(R.id.sigLocOpt_lst)).setChecked(true);
+                ((RadioButton)findViewById(R.id.sigLocOpt_lst)).setChecked(true);break;
+            default:
+                ((RadioButton)findViewById(R.id.sigLocOpt_ask)).setChecked(true);break;
         }
     }
+
     public void edit_quickCon(View view){
         SharedPreferences.Editor a = sp.edit();
         a.putBoolean("quickCon",((Switch)findViewById(R.id.quickConn)).isChecked());
@@ -49,9 +52,12 @@ public class settingActivity extends AppCompatActivity {
     }
     public void ClickSigLoc(View view){
         SharedPreferences.Editor a = sp.edit();
-        if(view.getId()==R.id.sigLocOpt_ask)a.putString("sigLoc","ask");
-        else if(view.getId()==R.id.sigLocOpt_lst)a.putString("sigLoc","lst");
-        else if(view.getId()==R.id.sigLocOpt_rel)a.putString("sigLoc","rel");
+        if(view.getId()==R.id.sigLocOpt_ask)
+            a.putString("sigLoc","ask");
+        else if(view.getId()==R.id.sigLocOpt_lst)
+            a.putString("sigLoc","lst");
+        else if(view.getId()==R.id.sigLocOpt_rel)
+            a.putString("sigLoc","rel");
         a.apply();
     }
     public void clickCheckInfo(View view){

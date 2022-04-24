@@ -187,7 +187,16 @@ public class MainActivity extends AppCompatActivity {
             }
             setPss(15,"等待蓝牙...");
             try {
-                Thread.sleep(2000);
+                for(int i=0;i<5;i++) {
+                    Thread.sleep(2000);
+                    if(blueadapter.isEnabled()){
+                        break;
+                    }else if(i==4){
+                        setPss(0, "蓝牙没有启用", true);
+                        disableBtn(false);
+                        return;
+                    }
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

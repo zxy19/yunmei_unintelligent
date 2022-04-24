@@ -70,7 +70,7 @@
         android:id="@+id/tip_f"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="该软件仅供学习目的，请勿用于非法目的。点击加号可以登录"
+        android:text="仅供学习目的，请勿违法使用。点击加号可以登录"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
