@@ -1,6 +1,8 @@
 package cc.xypp.yunmei;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKeys;
 
 import android.app.Activity;
 import android.content.Context;
@@ -24,15 +26,28 @@ import cc.xypp.yunmei.utils.http;
 
 public class loginActivity extends AppCompatActivity {
     private Context context;
-    private SharedPreferences sp;
+    private SharedPreferences sp,ssp;
+    private String stored;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context=this;
         setContentView(R.layout.activity_login);
         sp = getSharedPreferences("storage", MODE_PRIVATE);
-        ((EditText) findViewById(R.id.ipt_phone)).setText(sp.getString("loginUsr",""));
-        ((EditText) findViewById(R.id.ipt_pasw)).setText(sp.getString("loginPsw",""));
+        try {
+            String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
+            ssp = EncryptedSharedPreferences.create(
+                    "yunmei_secure",
+                    masterKeyAlias,
+                    context,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ((EditText) findViewById(R.id.ipt_phone)).setText(ssp.getString("loginUsr",""));
+        ((EditText) findViewById(R.id.ipt_pasw)).setText(stored=ssp.getString("loginPsw",""));
     }
     public void doLoginClick(View view){
         new Thread(login).start();
@@ -53,11 +68,14 @@ public class loginActivity extends AppCompatActivity {
             http sess = new http("https://base.yunmeitech.com/");
             try {
                 String userId;
-                Map<String, String> allDat = new HashMap<>();
+                //Map<String, String> allDat = new HashMap<>();
+                Map<String, String> sallDat = new HashMap<>();
 
                 Map<String, String> loginDat = new HashMap<>();
                 loginDat.put("userName", ((EditText) findViewById(R.id.ipt_phone)).getText().toString());
-                loginDat.put("userPwd", MD5Utils.stringToMD5(((EditText) findViewById(R.id.ipt_pasw)).getText().toString()));
+                String pwc=((EditText) findViewById(R.id.ipt_pasw)).getText().toString();
+                if(!pwc.equals(stored))pwc=MD5Utils.stringToMD5(pwc);
+                loginDat.put("userPwd",pwc);
                 JSONObject loginRes = new JSONObject(sess.post("/login", loginDat));
                 if (!loginRes.getBoolean("success")) {
                     toast(loginRes.getString("msg"));
@@ -65,9 +83,9 @@ public class loginActivity extends AppCompatActivity {
                 }
                 JSONObject temp = loginRes.getJSONObject("o");
                 sess.setToken(temp.getString("token"), (userId = temp.getString("userId")));
-                allDat.put("userId", userId);
-                allDat.put("name", temp.getString("realName"));
-                allDat.put("tel", temp.getString("userTel"));
+                sallDat.put("userId", userId);
+                sallDat.put("name", temp.getString("realName"));
+                sallDat.put("tel", temp.getString("userTel"));
 
                 //SCHOOL
                 Map<String, String> schoolDat = new HashMap<>();
@@ -88,29 +106,31 @@ public class loginActivity extends AppCompatActivity {
                     toast("门锁获取异常");
                     return;
                 }
-                allDat.put("area", lockRes.getString("areaName"));
-                allDat.put("areaNo", lockRes.getString("areaNo"));
-                allDat.put("build", lockRes.getString("buildName"));
-                allDat.put("buildNo", lockRes.getString("buildNo"));
-                allDat.put("school", lockRes.getString("schoolName"));
-                allDat.put("schoolNo", lockRes.getString("schoolNo"));
-                allDat.put("dorm", lockRes.getString("dormName"));
-                allDat.put("dormNo", lockRes.getString("dormNo"));
+                sallDat.put("area", lockRes.getString("areaName"));
+                sallDat.put("areaNo", lockRes.getString("areaNo"));
+                sallDat.put("build", lockRes.getString("buildName"));
+                sallDat.put("buildNo", lockRes.getString("buildNo"));
+                sallDat.put("school", lockRes.getString("schoolName"));
+                sallDat.put("schoolNo", lockRes.getString("schoolNo"));
+                sallDat.put("dorm", lockRes.getString("dormName"));
+                sallDat.put("dormNo", lockRes.getString("dormNo"));
 
-                allDat.put("lockNo", lockRes.getString("lockNo"));
-                allDat.put("lockSec", lockRes.getString("lockSecret"));
-                allDat.put("LUUID", lockRes.getString("lockServiceUuid"));
-                allDat.put("SUUID", lockRes.getString("lockCharacterUuid"));
-                allDat.put("LMAC", lockRes.getString("lockNo"));
-                allDat.put("loginUsr",loginDat.get("userName"));
-                allDat.put("loginPsw", loginDat.get("userPwd"));
+                sallDat.put("lockNo", lockRes.getString("lockNo"));
+                sallDat.put("lockSec", lockRes.getString("lockSecret"));
+                sallDat.put("LUUID", lockRes.getString("lockServiceUuid"));
+                sallDat.put("SUUID", lockRes.getString("lockCharacterUuid"));
+                sallDat.put("LMAC", lockRes.getString("lockNo"));
+
+                sallDat.put("loginUsr",loginDat.get("userName"));
+                sallDat.put("loginPsw", loginDat.get("userPwd"));
 
 
-                SharedPreferences.Editor edit = sp.edit();
 
-                allDat.forEach(edit::putString);
+                SharedPreferences.Editor sedit = ssp.edit();
 
-                edit.apply();
+                sallDat.forEach(sedit::putString);
+
+                sedit.apply();
                 toast("门锁添加完成");
                 runOnUiThread(()->{
                     startActivity(new Intent(context, lockInfoActivity.class));

@@ -3,6 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/ThinkPad/StudioProjects/yunmei_unintelligent/app/src/main/res/layout/activity_add_lock.xml" value="0.5389492753623188" />
+        <entry key="..\:/Users/ThinkPad/StudioProjects/yunmei_unintelligent/app/src/main/res/layout/activity_lock_info.xml" value="0.32708333333333334" />
+        <entry key="..\:/Users/ThinkPad/StudioProjects/yunmei_unintelligent/app/src/main/res/layout/activity_main.xml" value="0.5389492753623188" />
+        <entry key="..\:/Users/ThinkPad/StudioProjects/yunmei_unintelligent/app/src/main/res/layout/activity_qr.xml" value="0.32708333333333334" />
+        <entry key="..\:/Users/ThinkPad/StudioProjects/yunmei_unintelligent/app/src/main/res/layout/activity_setting.xml" value="0.32708333333333334" />
         <entry key="..\:/Users/zxypp/AndroidStudioProjects/2/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.153" />
         <entry key="..\:/Users/zxypp/AndroidStudioProjects/2/app/src/main/res/drawable/ic___.xml" value="0.204" />
         <entry key="..\:/Users/zxypp/AndroidStudioProjects/2/app/src/main/res/drawable/ic_launcher_background.xml" value="0.153" />

@@ -1,15 +1,18 @@
 package cc.xypp.yunmei;
 
+import static java.lang.Thread.sleep;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKeys;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,16 +22,16 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.Spinner;
 
 import com.clj.fastble.BleManager;
 import com.clj.fastble.callback.BleGattCallback;
-import com.clj.fastble.callback.BleReadCallback;
 import com.clj.fastble.callback.BleScanAndConnectCallback;
-import com.clj.fastble.callback.BleScanCallback;
 import com.clj.fastble.callback.BleWriteCallback;
 import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.exception.BleException;
@@ -38,15 +41,19 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.lang.reflect.Array;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
-import cc.xypp.yunmei.utils.MD5Utils;
+import cc.xypp.yunmei.eneity.Lock;
+import cc.xypp.yunmei.utils.OldVerConver;
 import cc.xypp.yunmei.utils.ToastUtil;
 import cc.xypp.yunmei.utils.http;
 import cc.xypp.yunmei.wigets.CircleProgress;
@@ -55,10 +62,7 @@ public class MainActivity extends AppCompatActivity {
     Button btn_unlock;
     private Context context;
     private boolean noLocalMac=false;
-    private String D_SERV;
-    private String D_LOCK;
-    private String D_Mac;
-    private String D_SEC;
+
     private String Uname;
     private String Upsw;
     private boolean USE_LST;
@@ -67,11 +71,14 @@ public class MainActivity extends AppCompatActivity {
     private final String[] permission = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION};
     private SharedPreferences sp;
+    private SharedPreferences ssp;
     private Boolean qkcn;
     private String ULocate;
     private boolean uwait;
     CircleProgress circ;
 
+    private Lock currentLock;
+    private final List<Lock> locks = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,12 +87,38 @@ public class MainActivity extends AppCompatActivity {
         context=this;
         if(!BleManager.getInstance().isSupportBle()){
             toast("设备不支持蓝牙！");
+            finish();
         }
+
+        try {
+            String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
+            ssp = EncryptedSharedPreferences.create(
+                    "yunmei_secure",
+                    masterKeyAlias,
+                    context,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
         sp = getSharedPreferences("storage", MODE_PRIVATE);
-        Boolean atco=sp.getBoolean("autoCon",false);
+
+        System.out.println(sp.getAll().toString());
+
+        boolean atco=sp.getBoolean("autoCon",false);
         qkcn=sp.getBoolean("quickCon",true);
-        Uname = sp.getString("loginUsr","");
-        Upsw = sp.getString("loginPsw","");
+
+
+        if(!sp.getString("LockSec","").equals("")){
+            OldVerConver.dealInsecure(sp,ssp);
+        }
+
+        Uname = ssp.getString("loginUsr","");
+        Upsw = ssp.getString("loginPsw","");
+
 
         circ = findViewById(R.id.circleProgress);
         setPss(0,"等待开始");
@@ -103,6 +136,41 @@ public class MainActivity extends AppCompatActivity {
             findViewById(R.id.tip_f).setVisibility(View.INVISIBLE);
         }
     }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        String D_Mac = ssp.getString("LMAC", "");
+        String D_SERV = ssp.getString("SUUID", "");
+        String D_LOCK = ssp.getString("LUUID", "");
+        String D_SEC = ssp.getString("lockSec", "");
+
+        locks.add(currentLock=new Lock("账号门锁", D_Mac, D_SERV, D_LOCK, D_SEC));
+        Set<String> lockSet = ssp.getStringSet("locks", new HashSet<>());
+        List<String> nameSet=new ArrayList<>();
+        nameSet.add("账号门锁");
+
+        lockSet.forEach((v)->{
+            String[] tmp = v.split("\\|");
+            if(tmp.length==5) {
+                locks.add(new Lock(tmp[0], tmp[1], tmp[2], tmp[3], tmp[4]));
+                nameSet.add(tmp[0]);
+            }
+        });
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, nameSet);
+        ((Spinner)findViewById(R.id.lockSelector)).setAdapter(adapter);
+        ((Spinner)findViewById(R.id.lockSelector)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                currentLock=locks.get(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                currentLock=new Lock();
+            }
+        });
+    }
     void setPss(int pss,String tip){
         setPss(pss,tip,false);
     }
@@ -119,11 +187,9 @@ public class MainActivity extends AppCompatActivity {
     public void loginClick(View view) {
         startActivity(new Intent(this, loginActivity.class));
     }
-
     public void settingClick(View view) {
         startActivity(new Intent(this, settingActivity.class));
     }
-
     public void openDoorClick(View view) {
         new Thread(this::openDoorPss).start();
     }
@@ -149,14 +215,10 @@ public class MainActivity extends AppCompatActivity {
         qkcn=sp.getBoolean("quickCon",true);
         disableBtn(true);
         noLocalMac=!qkcn;
-        D_Mac = sp.getString("LMAC", "");
-        D_SERV = sp.getString("SUUID", "");
-        D_LOCK = sp.getString("LUUID", "");
-        D_SEC = sp.getString("lockSec", "");
-        if (D_SERV.equals("") || D_LOCK.equals("")) {
-            setPss(0,"请先登录以获取门锁信息",true);
+
+        if (currentLock==null || currentLock.D_SERV==null || currentLock.D_SERV.equals("") || currentLock.D_LOCK==null || currentLock.D_LOCK.equals("")) {
+            setPss(0,"当前门锁不可用，您可能需要登录或选择其他门锁",true);
             disableBtn(false);
-            //toast("请先登录以获取门锁信息");
         }else openDoorWork();
     }
     private void openDoorWork() {
@@ -188,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
             setPss(15,"等待蓝牙...");
             try {
                 for(int i=0;i<5;i++) {
-                    Thread.sleep(2000);
+                    sleep(2000);
                     if(blueadapter.isEnabled()){
                         break;
                     }else if(i==4){
@@ -201,9 +263,9 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        if (!D_Mac.equals("") && !noLocalMac){
+        if (!currentLock.D_Mac.equals("") && !noLocalMac){
             setPss(20,"开始快速连接");
-            connect(D_Mac);
+            connect(currentLock.D_Mac);
         }else{
             setPss(20,"开始扫描");
             scan();
@@ -249,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        UUID[] uuids={UUID.fromString(D_LOCK)};
+        UUID[] uuids={UUID.fromString(currentLock.D_LOCK)};
         System.out.println(Arrays.toString(uuids));
         BleScanRuleConfig scanRuleConfig = new BleScanRuleConfig.Builder()
                 .setServiceUuids(uuids)
@@ -330,19 +392,19 @@ public class MainActivity extends AppCompatActivity {
     private void sendMsg() {
         BleManager.getInstance().write(
                 D_LOBJ,
-                D_LOCK,
-                D_SERV,
-                getPwd(D_SEC),
+                currentLock.D_LOCK,
+                currentLock.D_SERV,
+                getPwd(currentLock.D_SEC),
                 new BleWriteCallback() {
                     @Override
                     public void onWriteSuccess(int current, int total, byte[] justWrite) {
                         if(current==total) {
                             setPss(100,"开门完成");
                             if (noLocalMac) {
-                                D_Mac = D_LOBJ.getMac();
+                                currentLock.D_Mac = D_LOBJ.getMac();
                                 SharedPreferences sp = getSharedPreferences("storage", MODE_PRIVATE);
                                 SharedPreferences.Editor edit = sp.edit();
-                                edit.putString("LMAC", D_Mac);
+                                edit.putString("LMAC", currentLock.D_Mac);
                                 edit.apply();
                             }
                             disableBtn(false);
@@ -383,8 +445,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void signEve(){
-        Uname = sp.getString("loginUsr","");
-        Upsw = sp.getString("loginPsw","");
+        Uname = ssp.getString("loginUsr","");
+        Upsw = ssp.getString("loginPsw","");
         disableBtn(true);
         Thread sigWork = new Thread(this::signWork);
         String lstLoca = sp.getString("lstLoca","不存在");
@@ -500,7 +562,7 @@ public class MainActivity extends AppCompatActivity {
                         uwait=true;
                         new Thread(()->{
                             try {
-                                Thread.sleep(5000);
+                                sleep(5000);
                                 if(uwait){
                                     locationManager.removeUpdates(this);
                                     located();

@@ -9,6 +9,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.Switch;
+import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 public class settingActivity extends AppCompatActivity {
     private SharedPreferences sp;
@@ -68,5 +72,29 @@ public class settingActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
     }
-
+    public void scanQR(View view){
+        // 创建IntentIntegrator对象
+        IntentIntegrator intentIntegrator = new IntentIntegrator(settingActivity.this);
+        // 开始扫描
+        intentIntegrator.initiateScan();
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // 获取解析结果
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            if (result.getContents() == null) {
+                Toast.makeText(this, "取消扫描", Toast.LENGTH_LONG).show();
+            } else {
+                String c=result.getContents();
+                if(c.startsWith("yunmei://addlock/")){
+                    Intent i = new Intent(this,addLockActivity.class);
+                    i.setData(Uri.parse(c));
+                    startActivity(i);
+                }
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 }

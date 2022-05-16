@@ -42,6 +42,7 @@ public class CircleProgress extends View {
 
     public CircleProgress(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        System.out.println("DRAW_RR");
         _paint = new Paint();
         _paint.setAntiAlias(true);
         _rectF = new RectF();
@@ -50,20 +51,21 @@ public class CircleProgress extends View {
         executorService.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                getHandler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        double tmp = (targetV - _current)/8;
-                        if(tmp < 1.8 && tmp > 0)tmp = 1.8;
-                        if(tmp > -1.8 && tmp < 0)tmp = -1.8;
-                        if(tmp > targetV - _current)tmp = targetV - _current;
-                        if(tmp>0.00001 || tmp <-0.00001){
-                            _current+=tmp;
-                            invalidate();
-                        }
+                    double tmp = (targetV - _current) / 8;
+                    //System.out.println("test_" + tmp + "|" + _current);
+                    if (tmp < 1.8 && tmp > 0) tmp = 1.8;
+                    if (tmp > -1.8 && tmp < 0) tmp = -1.8;
+                    if (tmp > targetV - _current) tmp = targetV - _current;
+                    if (tmp > 0.00001 || tmp < -0.00001) {
+                        _current += tmp;
+                        getHandler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                invalidate();
+                            }
+                        });
                     }
-                });
-            }
+                }
         }, 100, 100, TimeUnit.MILLISECONDS);
     }
 
@@ -90,7 +92,6 @@ public class CircleProgress extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        //System.out.println("DRAW");
         //绘制圆形
         //设置为空心圆，如果不理解绘制弧线是什么意思就把这里的属性改为“填充”，跑一下瞬间就明白了
         _paint.setStyle(Paint.Style.STROKE);
