@@ -1,21 +1,35 @@
 package cc.xypp.yunmei;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKeys;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import cc.xypp.yunmei.eneity.Lock;
+
 public class settingActivity extends AppCompatActivity {
-    private SharedPreferences sp;
+    private SharedPreferences sp,ssp;
+    private final List<Lock> locks = new ArrayList<>();
+    private int currentLock=-1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +49,19 @@ public class settingActivity extends AppCompatActivity {
             default:
                 ((RadioButton)findViewById(R.id.sigLocOpt_ask)).setChecked(true);break;
         }
+        try {
+            String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
+            ssp = EncryptedSharedPreferences.create(
+                    "yunmei_secure",
+                    masterKeyAlias,
+                    this,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        reloadLocks();
     }
 
     public void edit_quickCon(View view){
@@ -71,6 +98,40 @@ public class settingActivity extends AppCompatActivity {
         Uri uri = Uri.parse("https://yunmei.xypp.cc/");
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
+    }
+    private void reloadLocks(){
+        Set<String> lockSet = ssp.getStringSet("locks", new HashSet<>());
+        List<String> nameSet=new ArrayList<>();
+        locks.clear();
+        lockSet.forEach((v)->{
+            String[] tmp = v.split("\\|");
+            if(tmp.length==5) {
+                locks.add(new Lock(tmp[0], tmp[1], tmp[2], tmp[3], tmp[4]));
+                nameSet.add(tmp[0]);
+            }
+        });
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, nameSet);
+        ((Spinner)findViewById(R.id.lockSelector_del)).setAdapter(adapter);
+        ((Spinner)findViewById(R.id.lockSelector_del)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                currentLock=i;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                currentLock=-1;
+            }
+        });
+    }
+    public void deleteLock(View view){
+        locks.remove(currentLock);
+        Set<String> lockSet = new HashSet<>();
+        locks.forEach((v)->{
+            lockSet.add(v.toString());
+        });
+        ssp.edit().putStringSet("locks",lockSet).apply();
+        reloadLocks();
     }
     public void scanQR(View view){
         // 创建IntentIntegrator对象

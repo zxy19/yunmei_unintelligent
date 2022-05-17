@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
         String D_SERV = ssp.getString("SUUID", "");
         String D_LOCK = ssp.getString("LUUID", "");
         String D_SEC = ssp.getString("lockSec", "");
-
+        locks.clear();
         locks.add(currentLock=new Lock("账号门锁", D_Mac, D_SERV, D_LOCK, D_SEC));
         Set<String> lockSet = ssp.getStringSet("locks", new HashSet<>());
         List<String> nameSet=new ArrayList<>();
@@ -215,8 +215,14 @@ public class MainActivity extends AppCompatActivity {
         qkcn=sp.getBoolean("quickCon",true);
         disableBtn(true);
         noLocalMac=!qkcn;
-
-        if (currentLock==null || currentLock.D_SERV==null || currentLock.D_SERV.equals("") || currentLock.D_LOCK==null || currentLock.D_LOCK.equals("")) {
+        if(currentLock==null){
+            String D_Mac = ssp.getString("LMAC", "");
+            String D_SERV = ssp.getString("SUUID", "");
+            String D_LOCK = ssp.getString("LUUID", "");
+            String D_SEC = ssp.getString("lockSec", "");
+            currentLock=new Lock("账号门锁", D_Mac, D_SERV, D_LOCK, D_SEC);
+        }
+        if (currentLock.D_SERV == null || currentLock.D_SERV.equals("") || currentLock.D_LOCK == null || currentLock.D_LOCK.equals("")) {
             setPss(0,"当前门锁不可用，您可能需要登录或选择其他门锁",true);
             disableBtn(false);
         }else openDoorWork();

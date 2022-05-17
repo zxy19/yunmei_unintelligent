@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".settingActivity">
 
+    <Spinner
+        android:id="@+id/lockSelector_del"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="@+id/button7"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/deleteBtn"
+        app:layout_constraintTop_toBottomOf="@+id/button2" />
+
     <Switch
         android:id="@+id/autoConn"
         android:layout_width="315dp"
@@ -35,7 +45,6 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="打卡定位："
-        android:textColor="#000000"
         app:layout_constraintStart_toStartOf="@+id/quickConn"
         app:layout_constraintTop_toBottomOf="@+id/quickConn" />
 
@@ -98,11 +107,11 @@
         style="@style/Widget.AppCompat.Button.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="24dp"
         android:onClick="about"
         android:text="关于（浏览器）"
         app:layout_constraintStart_toStartOf="@+id/button2"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
+        app:layout_constraintTop_toBottomOf="@+id/lockSelector_del" />
 
     <Button
         android:id="@+id/button7"
@@ -115,5 +124,15 @@
         app:layout_constraintEnd_toEndOf="@+id/radioGroup"
         app:layout_constraintStart_toEndOf="@+id/button2"
         app:layout_constraintTop_toTopOf="@+id/button2" />
+
+    <Button
+        android:id="@+id/deleteBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:onClick="deleteLock"
+        android:text="删除门锁"
+        app:layout_constraintBottom_toBottomOf="@+id/lockSelector_del"
+        app:layout_constraintStart_toStartOf="@+id/button3"
+        app:layout_constraintTop_toTopOf="@+id/lockSelector_del" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
