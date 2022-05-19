@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         qkcn=sp.getBoolean("quickCon",true);
 
 
-        if(!sp.getString("LockSec","").equals("")){
+        if(!sp.getString("lockSec","").equals("")){
             OldVerConver.dealInsecure(sp,ssp);
         }
 

@@ -37,7 +37,7 @@ public class settingActivity extends AppCompatActivity {
         sp = getSharedPreferences("storage", MODE_PRIVATE);
         System.out.println(((Switch)findViewById(R.id.quickConn)).isChecked());
         System.out.println(((Switch)findViewById(R.id.autoConn)).isChecked());
-        ((Switch)findViewById(R.id.quickConn)).setChecked(sp.getBoolean("quickCon",false));
+        ((Switch)findViewById(R.id.quickConn)).setChecked(sp.getBoolean("quickCon",true));
         ((Switch)findViewById(R.id.autoConn)).setChecked(sp.getBoolean("autoCon",false));
         switch (sp.getString("sigLoc","ask")){
             case "ask":

@@ -4,15 +4,16 @@ import android.content.SharedPreferences;
 
 public class OldVerConver {
     public static void dealInsecure(SharedPreferences sp,SharedPreferences ssp){
-
         SharedPreferences.Editor e=ssp.edit();
-        e.putString("area", sp.getString("areaName",""));
+        e.putString("name", sp.getString("name",""));
+        e.putString("userId", sp.getString("userId",""));
+        e.putString("area", sp.getString("area",""));
         e.putString("areaNo", sp.getString("areaNo",""));
-        e.putString("build", sp.getString("buildName",""));
+        e.putString("build", sp.getString("build",""));
         e.putString("buildNo", sp.getString("buildNo",""));
-        e.putString("school", sp.getString("schoolName",""));
+        e.putString("school", sp.getString("school",""));
         e.putString("schoolNo", sp.getString("schoolNo",""));
-        e.putString("dorm", sp.getString("dormName",""));
+        e.putString("dorm", sp.getString("dorm",""));
         e.putString("dormNo", sp.getString("dormNo",""));
         e.putString("lockNo",sp.getString("lockNo",""));
         e.putString("lockSec",sp.getString("lockSec",""));
