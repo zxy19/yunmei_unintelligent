@@ -1,138 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".settingActivity">
+    tools:context=".settingActivity"
+    android:orientation="vertical">
 
-    <Spinner
-        android:id="@+id/lockSelector_del"
-        android:layout_width="0dp"
-        android:layout_height="44dp"
-        android:layout_marginTop="24dp"
-        app:layout_constraintEnd_toEndOf="@+id/button7"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/deleteBtn"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
 
-    <Switch
-        android:id="@+id/autoConn"
-        android:layout_width="315dp"
-        android:layout_height="37dp"
-        android:layout_marginStart="52dp"
-        android:layout_marginTop="108dp"
-        android:onClick="edit_autoCon"
-        android:text="开启应用时自动连接"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Switch
-        android:id="@+id/quickConn"
-        android:layout_width="315dp"
-        android:layout_height="36dp"
-        android:layout_marginStart="52dp"
-        android:layout_marginTop="4dp"
-        android:onClick="edit_quickCon"
-        android:text="使用快速连接"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/autoConn" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="73dp"
-        android:layout_height="43dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="打卡定位："
-        app:layout_constraintStart_toStartOf="@+id/quickConn"
-        app:layout_constraintTop_toBottomOf="@+id/quickConn" />
-
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="244dp"
-        android:layout_height="45dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="@+id/quickConn"
-        app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/quickConn">
-
-        <RadioButton
-            android:id="@+id/sigLocOpt_ask"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="ClickSigLoc"
-            android:text="询问" />
-
-        <RadioButton
-            android:id="@+id/sigLocOpt_lst"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="ClickSigLoc"
-            android:text="上次" />
-
-        <RadioButton
-            android:id="@+id/sigLocOpt_rel"
+        <Switch
+            android:id="@+id/autoConn"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="35dp"
+            android:layout_marginEnd="35dp"
+            android:layout_marginTop="54dp"
+            android:onClick="edit_autoCon"
+            android:text="开启应用时自动连接"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <Switch
+            android:id="@+id/quickConn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="35dp"
+            android:layout_marginEnd="35dp"
+            android:layout_marginTop="12dp"
+            android:onClick="edit_quickCon"
+            android:text="使用快速连接"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/autoConn" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="43dp"
+            android:layout_marginStart="35dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="打卡定位："
+            app:layout_constraintStart_toStartOf="@+id/quickConn"
+            app:layout_constraintTop_toBottomOf="@+id/quickConn" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_marginEnd="35dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/sigLocOpt_ask"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="ClickSigLoc"
+                android:text="询问" />
+
+            <RadioButton
+                android:id="@+id/sigLocOpt_lst"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="ClickSigLoc"
+                android:text="上次" />
+
+            <RadioButton
+                android:id="@+id/sigLocOpt_rel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="ClickSigLoc"
+                android:text="重新定位" />
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="ClickSigLoc"
-            android:text="重新定位" />
-    </RadioGroup>
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
+            android:layout_marginStart="35dp"
+            android:layout_marginTop="24dp"
+            android:onClick="clickClearInfo"
+            android:text="清除保存的账号信息"
+            app:icon="@android:drawable/ic_menu_delete" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="52dp"
-        android:layout_marginTop="44dp"
-        android:onClick="clickClearInfo"
-        android:text="清除保存的账号信息"
-        app:icon="@android:drawable/ic_menu_delete"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp">
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="35dp"
+            android:onClick="clickCheckInfo"
+            android:text="查看保存的账号信息"
+            app:icon="@android:drawable/ic_menu_info_details" />
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="212dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="28dp"
-        android:onClick="clickCheckInfo"
-        android:text="查看保存的账号信息"
-        app:icon="@android:drawable/ic_menu_info_details"
-        app:layout_constraintStart_toStartOf="@+id/button"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
+        <Button
+            android:id="@+id/button7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:onClick="scanQR"
+            android:text="导入门锁" />
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/button3"
-        style="@style/Widget.AppCompat.Button.Small"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:onClick="about"
-        android:text="关于（浏览器）"
-        app:layout_constraintStart_toStartOf="@+id/button2"
-        app:layout_constraintTop_toBottomOf="@+id/lockSelector_del" />
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp">
+        <Button
+            android:id="@+id/deleteBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="35dp"
+            android:onClick="deleteLock"
+            android:text="删除门锁" />
 
-    <Button
-        android:id="@+id/button7"
-        android:layout_width="wrap_content"
+        <Spinner
+            android:id="@+id/lockSelector_del"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginEnd="35dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toEndOf="@+id/button7"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/deleteBtn"
+            app:layout_constraintTop_toBottomOf="@+id/button2" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:onClick="scanQR"
-        android:text="导入门锁"
-        app:layout_constraintBottom_toBottomOf="@+id/button2"
-        app:layout_constraintEnd_toEndOf="@+id/radioGroup"
-        app:layout_constraintStart_toEndOf="@+id/button2"
-        app:layout_constraintTop_toTopOf="@+id/button2" />
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp">
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="35dp"
+            android:onClick="about"
+            android:text="关于（浏览器）" />
 
-    <Button
-        android:id="@+id/deleteBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:onClick="deleteLock"
-        android:text="删除门锁"
-        app:layout_constraintBottom_toBottomOf="@+id/lockSelector_del"
-        app:layout_constraintStart_toStartOf="@+id/button3"
-        app:layout_constraintTop_toTopOf="@+id/lockSelector_del" />
+    </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

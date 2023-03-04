@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="info_color">#23e1d1</color>
-    <color name="primary_color">#74b9ff</color>
-    <color name="titleBar_color">#2392E1</color>
+    <color name="info_color">#4dabf7</color>
+    <color name="primary_color">#228be6</color>
+    <color name="titleBar_color">#1c7ed6</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
+
+    <color name="indigo_200">#9fa8da</color>
+    <color name="indigo_700">#303f9f</color>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>
