@@ -84,10 +84,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         BleManager.getInstance().init(getApplication());
         context = this;
-        /*if (!BleManager.getInstance().isSupportBle()) {
+        if (!BleManager.getInstance().isSupportBle()) {
             toast("设备不支持蓝牙！");
             finish();
-        }*/
+        }
 
         try {
             String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
