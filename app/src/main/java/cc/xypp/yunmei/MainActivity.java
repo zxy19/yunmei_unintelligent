@@ -22,12 +22,14 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.clj.fastble.BleManager;
 import com.clj.fastble.callback.BleGattCallback;
@@ -74,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sp;
     private SharedPreferences ssp;
     private Boolean qkcn;
+    private Boolean atex;
     private String ULocate;
     private boolean uwait;
     private Lock currentLock;
@@ -108,8 +111,8 @@ public class MainActivity extends AppCompatActivity {
         System.out.println(sp.getAll().toString());
 
         boolean atco = sp.getBoolean("autoCon", false);
+        atex = sp.getBoolean("autoExit", false);
         qkcn = sp.getBoolean("quickCon", true);
-
 
         if (!sp.getString("lockSec", "").equals("")) {
             OldVerConver.dealInsecure(sp, ssp);
@@ -430,6 +433,16 @@ public class MainActivity extends AppCompatActivity {
                                 edit.apply();
                             }
                             disableBtn(false);
+
+                            if (atex) {
+                                Toast.makeText(MainActivity.this,"开门成功，APP稍后自动退出", Toast.LENGTH_SHORT).show();
+
+                                Handler handler = new Handler();
+                                handler.postDelayed(() -> {
+                                    finish();
+                                    System.exit(0);
+                                }, 3000);
+                            }
                         } else {
                             setPss(75, "正在发送数据");
                         }

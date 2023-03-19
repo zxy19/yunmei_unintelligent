@@ -33,6 +33,25 @@
         android:orientation="horizontal">
 
         <Switch
+            android:id="@+id/autoExit"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="35dp"
+            android:layout_marginEnd="35dp"
+            android:layout_marginTop="12dp"
+            android:onClick="edit_autoExit"
+            android:text="开门成功后自动退出"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <Switch
             android:id="@+id/quickConn"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
