@@ -1,9 +1,6 @@
 package cc.xypp.yunmei;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.security.crypto.EncryptedSharedPreferences;
-import androidx.security.crypto.MasterKeys;
-
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -15,6 +12,11 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKeys;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -78,15 +80,83 @@ public class settingActivity extends AppCompatActivity {
     }
 
     public void edit_autoCon(View view) {
+        if (((Switch) findViewById(R.id.autoConn)).isChecked() && ((Switch) findViewById(R.id.autoExit)).isChecked()) {
+            checkDanger();
+            return;
+        }
         SharedPreferences.Editor a = sp.edit();
         a.putBoolean("autoCon", ((Switch) findViewById(R.id.autoConn)).isChecked());
         a.apply();
     }
 
     public void edit_autoExit(View view) {
+        if (((Switch) findViewById(R.id.autoConn)).isChecked() && ((Switch) findViewById(R.id.autoExit)).isChecked()) {
+            checkDanger();
+            return;
+        }
         SharedPreferences.Editor a = sp.edit();
         a.putBoolean("autoExit", ((Switch) findViewById(R.id.autoExit)).isChecked());
         a.apply();
+    }
+
+    public void checkDanger() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("危险操作提醒");
+        builder.setMessage("警告！您正在执行一项非常危险的操作！\n理论上同时打开自动开门和自动退出会导致以后无法再进行APP的其他操作。\n您只应该在确定了风险后执行此操作。\n确定要执行该操作吗？");
+        builder.setPositiveButton("放弃", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                ((Switch) findViewById(R.id.autoConn)).setChecked(sp.getBoolean("autoCon", false));
+                ((Switch) findViewById(R.id.autoExit)).setChecked(sp.getBoolean("autoExit", false));
+            }
+        });
+        builder.setNeutralButton("确定", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                alertAgain();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void alertAgain() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("危险操作再次提醒");
+        builder.setMessage("警告！您正在执行一项的操作确实是非常危险的！\n您不应该为了图方便而忽视风险\n您需要在确定不使用本APP其他功能时才执行此操作。\n再次确定，要执行该操作吗？");
+        builder.setPositiveButton("放弃", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                ((Switch) findViewById(R.id.autoConn)).setChecked(sp.getBoolean("autoCon", false));
+                ((Switch) findViewById(R.id.autoExit)).setChecked(sp.getBoolean("autoExit", false));
+            }
+        });
+        builder.setNegativeButton("确定", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                alertLast();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void alertLast() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("最后提醒");
+        builder.setMessage("确认操作后将同时打开这两项功能。请再次确认。\n您确定要打开吗");
+        builder.setNeutralButton("放弃", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                ((Switch) findViewById(R.id.autoConn)).setChecked(sp.getBoolean("autoCon", false));
+                ((Switch) findViewById(R.id.autoExit)).setChecked(sp.getBoolean("autoExit", false));
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                SharedPreferences.Editor a = sp.edit();
+                a.putBoolean("autoCon", ((Switch) findViewById(R.id.autoConn)).isChecked());
+                a.putBoolean("autoExit", ((Switch) findViewById(R.id.autoExit)).isChecked());
+                a.apply();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public void clickClearInfo(View view) {
