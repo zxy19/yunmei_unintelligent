@@ -1,36 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".lockInfoActivity">
+    tools:context=".lockInfoActivity"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/ttitle"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="76dp"
-        android:text="用户和门锁信息"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/info"
-        android:layout_width="364dp"
-        android:layout_height="510dp"
-        android:duplicateParentState="false"
-        android:editable="false"
-        android:ems="10"
-        android:gravity="start|top"
-        android:inputType="none"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/space2"
-        app:layout_constraintVertical_bias="0.0" />
+        android:gravity="center_horizontal"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/ttitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="76dp"
+            android:text="用户和门锁信息"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+    </LinearLayout>
 
     <Space
         android:id="@+id/space2"
@@ -39,16 +29,40 @@
         app:layout_constraintTop_toBottomOf="@+id/ttitle"
         tools:layout_editor_absoluteX="92dp" />
 
-    <Button
-        android:id="@+id/button6"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:onClick="shareLock"
-        android:text="分享"
-        app:icon="@android:drawable/ic_dialog_alert"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/info" />
+        android:gravity="center_horizontal"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <EditText
+            android:id="@+id/info"
+            android:layout_width="364dp"
+            android:layout_height="510dp"
+            android:duplicateParentState="false"
+            android:editable="false"
+            android:ems="10"
+            android:gravity="start|top"
+            android:inputType="none"
+            tools:ignore="Deprecated" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_gravity="right"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:onClick="shareLock"
+            android:text="分享"
+            app:icon="@android:drawable/ic_dialog_alert" />
+    </LinearLayout>
+
+</LinearLayout>

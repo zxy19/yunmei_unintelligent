@@ -21,10 +21,10 @@
         android:layout_marginTop="68dp"
         android:ems="10"
         android:hint="输入手机号"
-        android:text=""
         android:inputType="phone"
+        android:text=""
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
@@ -35,10 +35,9 @@
         android:layout_marginTop="60dp"
         android:ems="10"
         android:hint="输入密码"
-        android:text=""
         android:inputType="textPassword"
+        android:text=""
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ipt_phone" />
 
