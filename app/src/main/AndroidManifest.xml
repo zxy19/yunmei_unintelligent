@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="cc.xypp.yunmei">
 
+    <uses-permission android:name="android.permission.NFC" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -11,6 +12,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
 
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="true" />
     <uses-feature
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
@@ -25,20 +29,23 @@
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="portrait"
-            tools:replace="android:screenOrientation"/>
+            tools:replace="android:screenOrientation" />
         <activity
             android:name=".QrActivity"
             android:exported="false" />
         <activity
             android:name=".addLockActivity"
-            android:label="添加额外门锁"
-            android:exported="true">
+            android:exported="true"
+            android:label="添加额外门锁">
             <intent-filter>
-                <data android:host="addlock" android:scheme="yunmei" />
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <data
+                    android:host="addlock"
+                    android:scheme="yunmei" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
@@ -57,6 +64,7 @@
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="cc.xypp.yunmei.unlock" />
                 <action android:name="cc.xypp.yunmei.sign" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
