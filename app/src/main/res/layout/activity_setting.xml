@@ -92,21 +92,21 @@
             <RadioButton
                 android:id="@+id/sigLocOpt_ask"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:onClick="ClickSigLoc"
                 android:text="询问" />
 
             <RadioButton
                 android:id="@+id/sigLocOpt_lst"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:onClick="ClickSigLoc"
                 android:text="上次" />
 
             <RadioButton
                 android:id="@+id/sigLocOpt_rel"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:onClick="ClickSigLoc"
                 android:text="重新定位" />
         </RadioGroup>
@@ -118,10 +118,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:orientation="horizontal">
+
         <Button
             android:id="@+id/button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginStart="35dp"
             android:layout_marginTop="24dp"
             android:onClick="clickClearInfo"
@@ -134,48 +135,23 @@
         android:layout_gravity="center_horizontal"
         android:orientation="horizontal"
         android:layout_marginTop="24dp">
+
         <Button
             android:id="@+id/button2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginStart="35dp"
             android:onClick="clickCheckInfo"
-            android:text="查看保存的账号信息"
+            android:text="查看保存的门锁信息"
             app:icon="@android:drawable/ic_menu_info_details" />
 
         <Button
             android:id="@+id/button7"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginStart="8dp"
             android:onClick="scanQR"
             android:text="导入门锁" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:orientation="horizontal"
-        android:layout_marginTop="24dp">
-        <Button
-            android:id="@+id/deleteBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="35dp"
-            android:onClick="deleteLock"
-            android:text="删除门锁" />
-
-        <Spinner
-            android:id="@+id/lockSelector_del"
-            android:layout_width="match_parent"
-            android:layout_height="44dp"
-            android:layout_marginEnd="35dp"
-            android:layout_marginStart="8dp"
-            app:layout_constraintEnd_toEndOf="@+id/button7"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/deleteBtn"
-            app:layout_constraintTop_toBottomOf="@+id/button2" />
     </LinearLayout>
 
     <LinearLayout

@@ -1,29 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DesignSurface">
-    <option name="filePathToZoomLevelMap">
-      <map>
-        <entry key="..\:/Users/ThinkPad/StudioProjects/yunmei_unintelligent/app/src/main/res/layout/activity_add_lock.xml" value="0.5389492753623188" />
-        <entry key="..\:/Users/ThinkPad/StudioProjects/yunmei_unintelligent/app/src/main/res/layout/activity_lock_info.xml" value="0.32708333333333334" />
-        <entry key="..\:/Users/ThinkPad/StudioProjects/yunmei_unintelligent/app/src/main/res/layout/activity_main.xml" value="0.5389492753623188" />
-        <entry key="..\:/Users/ThinkPad/StudioProjects/yunmei_unintelligent/app/src/main/res/layout/activity_qr.xml" value="0.32708333333333334" />
-        <entry key="..\:/Users/ThinkPad/StudioProjects/yunmei_unintelligent/app/src/main/res/layout/activity_setting.xml" value="0.32708333333333334" />
-        <entry key="..\:/Users/zxypp/AndroidStudioProjects/2/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.153" />
-        <entry key="..\:/Users/zxypp/AndroidStudioProjects/2/app/src/main/res/drawable/ic___.xml" value="0.204" />
-        <entry key="..\:/Users/zxypp/AndroidStudioProjects/2/app/src/main/res/drawable/ic_launcher_background.xml" value="0.153" />
-        <entry key="..\:/Users/zxypp/AndroidStudioProjects/2/app/src/main/res/drawable/ic_t1.xml" value="0.153" />
-        <entry key="..\:/Users/zxypp/AndroidStudioProjects/2/app/src/main/res/drawable/ic_t2.xml" value="0.153" />
-        <entry key="..\:/Users/zxypp/AndroidStudioProjects/2/app/src/main/res/drawable/ic_unlock.xml" value="0.204" />
-        <entry key="..\:/Users/zxypp/AndroidStudioProjects/2/app/src/main/res/layout/activity_lock_info.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/zxypp/AndroidStudioProjects/2/app/src/main/res/layout/activity_login.xml" value="0.22" />
-        <entry key="..\:/Users/zxypp/AndroidStudioProjects/2/app/src/main/res/layout/activity_main.xml" value="0.22" />
-        <entry key="..\:/Users/zxypp/AndroidStudioProjects/2/app/src/main/res/layout/activity_setting.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/zxypp/AndroidStudioProjects/2/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.153" />
-        <entry key="..\:/Users/zxypp/AndroidStudioProjects/2/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.153" />
-        <entry key="..\:/Users/zxypp/AndroidStudioProjects/2/app/src/main/res/xml/shortcuts.xml" value="0.19635416666666666" />
-      </map>
-    </option>
-  </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>

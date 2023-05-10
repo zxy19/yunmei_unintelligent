@@ -1,118 +1,182 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:theme="@style/Base.Theme.云梅不智能"
     tools:context=".MainActivity">
 
 
-    <cc.xypp.yunmei.wigets.CircleProgress
-        android:id="@+id/circleProgress"
-        android:layout_width="238dp"
-        android:layout_height="238dp"
-        android:layout_marginTop="48dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/btn_sign"
-        android:layout_width="wrap_content"
+        <cc.xypp.yunmeiui.wigets.CircleProgress
+            android:id="@+id/circleProgress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:onClick="clickSign"
-        android:text="打卡"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_unlock" />
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton2"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginBottom="52dp"
-        android:clickable="true"
-        android:onClick="settingClick"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_manage" />
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btn_login"
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:text="使用"
+            tools:ignore="MissingConstraints" />
 
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginBottom="52dp"
-        android:clickable="true"
-        android:onClick="loginClick"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        <Spinner
+            android:id="@+id/lockSelector"
+            android:layout_width="160dp"
+            android:layout_height="40dp"
+            tools:ignore="MissingConstraints" />
 
-    <TextView
-        android:id="@+id/tip_f"
-        android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="开锁"
+            tools:ignore="MissingConstraints" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="仅供学习目的，请勿违法使用。点击加号可以登录"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_sign"
-        app:layout_constraintVertical_bias="0.927"
-        tools:ignore="MissingConstraints" />
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/btn_unlock"
-        android:layout_width="130dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="16dp"
-        android:onClick="openDoorClick"
-        android:text="开门"
-        android:textSize="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lockSelector" />
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/btn_unlock"
+            android:layout_width="130dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="16dp"
+            android:onClick="openDoorClick"
+            android:text="开门"
+            android:textSize="20dp" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="20dp"
-        android:text="开锁"
-        app:layout_constraintStart_toEndOf="@+id/lockSelector"
-        app:layout_constraintTop_toBottomOf="@+id/circleProgress"
-        tools:ignore="MissingConstraints" />
+        android:orientation="horizontal">
 
-    <Spinner
-        android:id="@+id/lockSelector"
-        android:layout_width="120dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/circleProgress"
-        tools:ignore="MissingConstraints" />
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/btn_sign"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:onClick="clickSign"
+            android:text="打卡" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+
+    <Space
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="4dp"
-        android:text="使用"
-        app:layout_constraintEnd_toStartOf="@+id/lockSelector"
-        app:layout_constraintTop_toBottomOf="@+id/circleProgress"
-        tools:ignore="MissingConstraints" />
+        android:layout_weight="0.5" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="bottom"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/floatingActionButton2"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="28dp"
+                android:clickable="true"
+                android:onClick="settingClick"
+                android:src="@android:drawable/ic_menu_manage"
+                app:backgroundTint="@color/teal_200" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btn_login"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginEnd="28dp"
+                android:clickable="true"
+                android:onClick="loginClick"
+                android:src="@android:drawable/ic_menu_add"
+                app:backgroundTint="@color/teal_200" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tip_f"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:text="仅供学习目的，请勿违法使用。点击加号可以登录"
+            tools:ignore="MissingConstraints" />
+    </LinearLayout>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

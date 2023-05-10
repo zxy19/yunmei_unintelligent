@@ -7,9 +7,9 @@
         android:shortcutLongLabel="@string/unlockShortCut"
         android:shortcutDisabledMessage="@string/unlockShortCutDisabled">
         <intent
-            android:action="cc.xypp.yunmei.unlock"
-            android:targetPackage="cc.xypp.yunmei"
-            android:targetClass="cc.xypp.yunmei.MainActivity"
+            android:action="cc.xypp.yunmeiui.unlock"
+            android:targetPackage="cc.xypp.yunmeiui"
+            android:targetClass="cc.xypp.yunmeiui.MainActivity"
 
             />
         <!-- If your shortcut is associated with multiple intents, include them
@@ -25,9 +25,9 @@
         android:shortcutLongLabel="@string/signShortCut"
         android:shortcutDisabledMessage="@string/signShortCutDisabled">
         <intent
-            android:action="cc.xypp.yunmei.sign"
-            android:targetPackage="cc.xypp.yunmei"
-            android:targetClass="cc.xypp.yunmei.MainActivity"
+            android:action="cc.xypp.yunmeiui.sign"
+            android:targetPackage="cc.xypp.yunmeiui"
+            android:targetClass="cc.xypp.yunmeiui.MainActivity"
 
             />
         <!-- If your shortcut is associated with multiple intents, include them

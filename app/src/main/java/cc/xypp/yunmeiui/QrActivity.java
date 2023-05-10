@@ -1,4 +1,4 @@
-package cc.xypp.yunmei;
+package cc.xypp.yunmeiui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 
-import cc.xypp.yunmei.utils.QRUtils;
+import cc.xypp.yunmeiui.utils.QRUtils;
 
 public class QrActivity extends AppCompatActivity {
 
@@ -15,6 +15,6 @@ public class QrActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qr);
         Intent i = getIntent();
-        ((ImageView)findViewById(R.id.QRImg)).setImageBitmap(QRUtils.createQRCodeBitmap("yunmei://addlock/"+i.getDataString(),400,400));
+        ((ImageView)findViewById(R.id.QRImg)).setImageBitmap(QRUtils.createQRCodeBitmap(i.getDataString(),400,400));
     }
 }

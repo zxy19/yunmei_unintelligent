@@ -1,4 +1,4 @@
-package cc.xypp.yunmei.utils;
+package cc.xypp.yunmeiui.utils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cc.xypp.yunmei.eneity.Lock;
+import cc.xypp.yunmeiui.eneity.Lock;
 
 public class YunmeiAPI {
     public static class Schools {
@@ -39,8 +39,8 @@ public class YunmeiAPI {
                 lockRes=lockResList.getJSONObject(i);
                 currentLock.label = String.format("%s-%s", lockRes.getString("buildName"), lockRes.getString("dormNo"));
                 currentLock.D_SEC = lockRes.getString("lockSecret");
+                currentLock.D_CHAR = lockRes.getString("lockCharacterUuid");
                 currentLock.D_SERV = lockRes.getString("lockServiceUuid");
-                currentLock.D_LOCK = lockRes.getString("lockCharacterUuid");
                 currentLock.D_Mac = lockRes.getString("lockNo");
                 locks.add(currentLock);
             }catch (Exception ignored){}
@@ -52,9 +52,8 @@ public class YunmeiAPI {
         this(username,password,false);
     }
     public YunmeiAPI(String username,String password,boolean isMd5) throws RuntimeException{
-        http sess = new http("https://base.yunmeitech.com/");
+        sess = new http("https://base.yunmeitech.com/");
         try {
-            String userId;
             if(!isMd5)password=MD5Utils.stringToMD5(password);
 
 
@@ -80,6 +79,7 @@ public class YunmeiAPI {
                 JSONObject schoolRes = schoolList.getJSONObject(j);
                 Schools school = new Schools();
                 school.schoolNo=schoolRes.getString("schoolNo");
+                school.schoolName=schoolRes.getJSONObject("school").getString("schoolName");
                 school.url=schoolRes.getJSONObject("school").getString("serverUrl");
                 school.token=schoolRes.getString("token");
                 schools.add(school);
