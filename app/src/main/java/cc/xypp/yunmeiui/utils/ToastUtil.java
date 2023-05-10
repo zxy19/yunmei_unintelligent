@@ -1,8 +1,7 @@
-package cc.xypp.yunmei.utils;
+package cc.xypp.yunmeiui.utils;
 
 
 import android.content.Context;
-import android.os.Looper;
 import android.widget.Toast;
 
 public class ToastUtil {

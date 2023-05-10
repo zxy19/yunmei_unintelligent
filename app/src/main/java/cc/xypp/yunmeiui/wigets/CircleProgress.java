@@ -1,4 +1,4 @@
-package cc.xypp.yunmei.wigets;
+package cc.xypp.yunmeiui.wigets;
 
 
 
@@ -9,7 +9,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import java.util.concurrent.Executors;
@@ -28,6 +27,7 @@ public class CircleProgress extends View {
     private double targetV = 0,_current = 0;
     //圆弧（也可以说是圆环）的宽度
     private float _arcWidth = 30;
+    int offsetx = 0;
     //控件的宽度
     private float _width;
     private String _tip="";
@@ -87,6 +87,11 @@ public class CircleProgress extends View {
         //getMeasuredWidth获取的是view的原始大小，也就是xml中配置或者代码中设置的大小
         //getWidth获取的是view最终显示的大小，这个大小不一定等于原始大小
         _width = getMeasuredWidth();
+        int th = getMeasuredHeight();
+        if(th < _width){
+            offsetx = (int) ((_width-th)/2);
+            _width = th;
+        }
     }
 
     @Override
@@ -103,9 +108,9 @@ public class CircleProgress extends View {
         //小圆的半径
         float smallCircleRadius = bigCircleRadius - _arcWidth;
         //绘制小圆
-        canvas.drawCircle(bigCircleRadius, bigCircleRadius, smallCircleRadius, _paint);
+        canvas.drawCircle(offsetx+bigCircleRadius, bigCircleRadius, smallCircleRadius, _paint);
         _paint.setColor(Color.parseColor("#54a3f7"));
-        _rectF.set(_arcWidth, _arcWidth, _width - _arcWidth, _width - _arcWidth);
+        _rectF.set(offsetx+_arcWidth, _arcWidth, offsetx+ _width - _arcWidth, _width - _arcWidth);
         //绘制圆弧
         canvas.drawArc(_rectF, 90, (float) (_current * 360 / _max), false, _paint);
         //计算百分比
@@ -116,6 +121,6 @@ public class CircleProgress extends View {
         _paint.setColor(Color.parseColor("#54a3f7"));
         _paint.setStyle(Paint.Style.FILL_AND_STROKE);
         //绘制百分比
-        canvas.drawText(_tip, bigCircleRadius - _rect.width() / 2, bigCircleRadius + _rect.height() / 2, _paint);
+        canvas.drawText(_tip, offsetx+bigCircleRadius - _rect.width() / 2, bigCircleRadius + _rect.height() / 2, _paint);
     }
 }

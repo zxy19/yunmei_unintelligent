@@ -1,4 +1,4 @@
-package cc.xypp.yunmei;
+package cc.xypp.yunmeiui;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -6,32 +6,29 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.RadioButton;
-import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.security.crypto.EncryptedSharedPreferences;
-import androidx.security.crypto.MasterKeys;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
-import cc.xypp.yunmei.eneity.Lock;
+import cc.xypp.yunmeiui.eneity.Lock;
+import cc.xypp.yunmeiui.utils.SecureStorage;
 
 public class settingActivity extends AppCompatActivity {
     private final List<Lock> locks = new ArrayList<>();
     private SharedPreferences sp, ssp;
     private int currentLock = -1;
+    SecureStorage secureStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,19 +55,7 @@ public class settingActivity extends AppCompatActivity {
                 ((RadioButton) findViewById(R.id.sigLocOpt_ask)).setChecked(true);
                 break;
         }
-        try {
-            String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
-            ssp = EncryptedSharedPreferences.create(
-                    "yunmei_secure",
-                    masterKeyAlias,
-                    this,
-                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            );
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        reloadLocks();
+        secureStorage = new SecureStorage(this);
     }
 
     public void edit_quickCon(View view) {
@@ -140,7 +125,7 @@ public class settingActivity extends AppCompatActivity {
     private void alertLast() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("最后提醒");
-        builder.setMessage("确认操作后将同时打开这两项功能。请再次确认。\n您确定要打开吗");
+        builder.setMessage("确认操作后将同时打开这两项功能。请再次确认。\n如需恢复，可选择清除软件数据或重新安装。\n您确定要打开吗");
         builder.setNeutralButton("放弃", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 ((Switch) findViewById(R.id.autoConn)).setChecked(sp.getBoolean("autoCon", false));
@@ -160,12 +145,12 @@ public class settingActivity extends AppCompatActivity {
     }
 
     public void clickClearInfo(View view) {
-        Boolean atco = sp.getBoolean("autoCon", false);
-        Boolean atex = sp.getBoolean("autoExit", false);
-        Boolean qkcn = sp.getBoolean("quickCon", true);
-        SharedPreferences.Editor a = sp.edit();
-        a.clear();
-        a.apply();
+        Map<String,String> sallDat = new HashMap<>();
+        sallDat.put("loginUsr","");
+        sallDat.put("loginPsw", "");
+        sallDat.put("schoolNo","");
+        sallDat.put("lockNo", "");
+        secureStorage.setVal(sallDat);
     }
 
     public void ClickSigLoc(View view) {
@@ -182,49 +167,11 @@ public class settingActivity extends AppCompatActivity {
     public void clickCheckInfo(View view) {
         startActivity(new Intent(this, lockInfoActivity.class));
     }
-
     public void about(View view) {
         Uri uri = Uri.parse("https://yunmei.xypp.cc/");
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
     }
-
-    private void reloadLocks() {
-        Set<String> lockSet = ssp.getStringSet("locks", new HashSet<>());
-        List<String> nameSet = new ArrayList<>();
-        locks.clear();
-        lockSet.forEach((v) -> {
-            String[] tmp = v.split("\\|");
-            if (tmp.length == 5) {
-                locks.add(new Lock(tmp[0], tmp[1], tmp[2], tmp[3], tmp[4]));
-                nameSet.add(tmp[0]);
-            }
-        });
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, nameSet);
-        ((Spinner) findViewById(R.id.lockSelector_del)).setAdapter(adapter);
-        ((Spinner) findViewById(R.id.lockSelector_del)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                currentLock = i;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                currentLock = -1;
-            }
-        });
-    }
-
-    public void deleteLock(View view) {
-        locks.remove(currentLock);
-        Set<String> lockSet = new HashSet<>();
-        locks.forEach((v) -> {
-            lockSet.add(v.toString());
-        });
-        ssp.edit().putStringSet("locks", lockSet).apply();
-        reloadLocks();
-    }
-
     public void scanQR(View view) {
         // 创建IntentIntegrator对象
         IntentIntegrator intentIntegrator = new IntentIntegrator(settingActivity.this);
@@ -241,7 +188,7 @@ public class settingActivity extends AppCompatActivity {
                 Toast.makeText(this, "取消扫描", Toast.LENGTH_LONG).show();
             } else {
                 String c = result.getContents();
-                if (c.startsWith("yunmei://addlock/")) {
+                if (c.startsWith("yunmeiui://lock_info/")) {
                     Intent i = new Intent(this, addLockActivity.class);
                     i.setData(Uri.parse(c));
                     startActivity(i);

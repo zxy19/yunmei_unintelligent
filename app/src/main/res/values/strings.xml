@@ -4,4 +4,6 @@
     <string name="unlockShortCut">开锁</string>
     <string name="signShortCutDisabled">签到功能目前不可用</string>
     <string name="signShortCut">签到</string>
+    <string name="title_activity_nfc">nfcActivity</string>
+
 </resources>

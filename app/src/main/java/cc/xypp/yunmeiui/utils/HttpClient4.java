@@ -1,17 +1,12 @@
-package cc.xypp.yunmei.utils;
+package cc.xypp.yunmeiui.utils;
 
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.util.*;
-import java.util.Map.Entry;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 
 public class HttpClient4 {
     public static String doGet(String url,Map<String,String> header) {

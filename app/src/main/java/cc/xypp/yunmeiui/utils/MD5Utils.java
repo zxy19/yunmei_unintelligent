@@ -1,4 +1,4 @@
-package cc.xypp.yunmei.utils;
+package cc.xypp.yunmeiui.utils;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
