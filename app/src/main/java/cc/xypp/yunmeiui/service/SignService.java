@@ -26,12 +26,15 @@ import java.util.List;
 import java.util.Map;
 
 import cc.xypp.yunmeiui.eneity.Lock;
+import cc.xypp.yunmeiui.eneity.User;
 import cc.xypp.yunmeiui.utils.SecureStorage;
 import cc.xypp.yunmeiui.utils.YunmeiAPI;
 
 public class SignService {
 
 
+    private final Lock currentLock;
+    private final User user;
     private boolean uwait;
 
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -69,24 +72,19 @@ public class SignService {
     private boolean StoreLocation;
 
     SecureStorage secureStorage;
-    private String password;
-    private String username;
-    private String lockNo;
-    private String schNo;
+
 
     private String UserLocation;
     private SharedPreferences sp;
 
 
-    public SignService(Activity context, Callback _callback) {
+    public SignService(Activity context,Lock currentLock, User user, Callback _callback) {
         ctx = context;
         callback = _callback;
         secureStorage = new SecureStorage(ctx);
         sp = ctx.getSharedPreferences("storage", MODE_PRIVATE);
-        username = secureStorage.getVal("loginUsr", "");
-        password = secureStorage.getVal("loginPsw", "");
-        schNo = secureStorage.getVal("schoolNo", "");
-        lockNo = secureStorage.getVal("lockNo", "");
+        this.currentLock = currentLock;
+        this.user = user;
     }
 
     public void signEve() {
@@ -140,11 +138,6 @@ public class SignService {
     }
 
     private void signWork() {
-        if (username.equals("") || password.equals("")) {
-            callback.setpss(0, "请勾选保存为主用户名并登录", true);
-            callback.end();
-            return;
-        }
         if (useLastLocation) {
             if (UserLocation.equals("不存在")) {
                 callback.setpss(0, "上次定位信息不存在，请重新定位", true);
@@ -240,9 +233,9 @@ public class SignService {
             String LoInfo = UserLocation;
             try {
                 callback.setpss(55, "登录");
-                YunmeiAPI api = new YunmeiAPI(username, password,true);
+                YunmeiAPI api = new YunmeiAPI(user.username, user.passwordMD5,true);
                 for (int i = 0; i < api.schools.size(); i++) {
-                    if (api.schools.get(i).schoolNo.equals(schNo)) {
+                    if (api.schools.get(i).schoolNo.equals(currentLock.schoolNo)) {
                         api.setSchool(i);
                         break;
                     }
@@ -251,14 +244,14 @@ public class SignService {
                 List<Lock> lockList = api.loginAndGetLock();
                 String lockNoConfirm = "";
                 for (Lock lock : lockList) {
-                    if (lock.D_Mac.equals(lockNo)) {
-                        lockNoConfirm = lockNo;
+                    if (lock.D_Mac.equals(currentLock.lockNo)) {
+                        lockNoConfirm = currentLock.lockNo;
                         break;
                     }
                 }
                 Map<String, String> sigDat = new HashMap<>();
-                sigDat.put("schoolNo", schNo);
-                sigDat.put("lockNo", lockNo);
+                sigDat.put("schoolNo", currentLock.schoolNo);
+                sigDat.put("lockNo", currentLock.lockNo);
                 sigDat.put("location", LoInfo);
                 callback.setpss(95, "打卡");
                 JSONObject sigRes = new JSONObject(api.sess.post("/signrecord/signbyschool", sigDat));

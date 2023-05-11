@@ -1,74 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginStart="15dp"
-    android:layout_marginEnd="15dp"
-    android:gravity="center"
-    android:orientation="vertical"
+    android:theme="@style/Base.Theme.云梅不智能"
     tools:context=".loginActivity">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="登录到云莓智能"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
-
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:gravity="center"
         android:orientation="vertical">
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
         <TextView
-            android:id="@+id/phone_label"
+            android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="手机号" />
+            android:text="登录到云莓智能"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
-        <EditText
-            android:id="@+id/ipt_phone"
-            android:layout_width="212dp"
-            android:layout_height="65dp"
-            android:ems="10"
-            android:hint="输入手机号"
-            android:inputType="phone"
-            android:text="" />
-
-        <TextView
-            android:id="@+id/pasw_label"
-            android:layout_width="31dp"
-            android:layout_height="17dp"
-            android:text="密码" />
-
-        <EditText
-            android:id="@+id/ipt_pasw"
-            android:layout_width="209dp"
-            android:layout_height="57dp"
-            android:ems="10"
-            android:hint="输入密码"
-            android:inputType="textPassword"
-            android:text="" />
-
-        <CheckBox
-            android:id="@+id/save_primary"
+        <Space
             android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="保存为主用户" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/phone_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="手机号" />
+
+            <EditText
+                android:id="@+id/ipt_phone"
+                android:layout_width="212dp"
+                android:layout_height="65dp"
+                android:ems="10"
+                android:hint="输入手机号"
+                android:inputType="phone"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/pasw_label"
+                android:layout_width="31dp"
+                android:layout_height="17dp"
+                android:text="密码" />
+
+            <EditText
+                android:id="@+id/ipt_pasw"
+                android:layout_width="209dp"
+                android:layout_height="57dp"
+                android:ems="10"
+                android:hint="输入密码"
+                android:inputType="textPassword"
+                android:text="" />
+
+            <CheckBox
+                android:id="@+id/save_primary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="保存用户" />
+        </LinearLayout>
+
+        <Space
+            android:id="@+id/space"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/login_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="doLoginClick"
+            android:text="登录" />
+
+        <Button
+            android:id="@+id/use_saved_acc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="use_saved"
+            android:text="使用保存的账号" />
+
     </LinearLayout>
-
-    <Space
-        android:id="@+id/space"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/login_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="doLoginClick"
-        android:text="登录" />
-
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

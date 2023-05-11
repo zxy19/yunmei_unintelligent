@@ -23,6 +23,7 @@ import cc.xypp.yunmeiui.eneity.Lock;
 import cc.xypp.yunmeiui.utils.AlertUtils;
 import cc.xypp.yunmeiui.utils.LockManageUtil;
 import cc.xypp.yunmeiui.utils.SecureStorage;
+import cc.xypp.yunmeiui.utils.UserUtils;
 
 public class lockInfoActivity extends AppCompatActivity {
     Context ctx;
@@ -31,12 +32,14 @@ public class lockInfoActivity extends AppCompatActivity {
     List<Lock> lockList;
     Lock currentLock = null;
     private Lock defaultLock = null;
-
+    private boolean noLock = false;
+    UserUtils userUtils;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ctx = this;
         setContentView(R.layout.activity_lock_info);
+        userUtils = new UserUtils(this);
         secureStorage = new SecureStorage(this);
         lockManageUtil = new LockManageUtil(this);
         defaultLock = lockManageUtil.getDef();
@@ -55,7 +58,23 @@ public class lockInfoActivity extends AppCompatActivity {
                 "\n" +
                 "锁Mac：" +
                 lock.D_Mac +
+                "\n" +
+                "学校ID：" +
+                lock.schoolNo +
+                "\n" +
+                "门锁ID：" +
+                lock.lockNo +
+                "\n" +
+                "用户名（HASH）：" +
+                lock.username +
                 "\n";
+        if(Objects.equals(lock.username, "")){
+            sb+="【旧版数据】";
+        }else if(userUtils.getByNameMD5(lock.username)!=null){
+            sb+="【已保存账号】";
+        }else{
+            sb+="【未保存账号】";
+        }
         if(defaultLock != null && Objects.equals(defaultLock.label, lock.label)){
             sb += "【默认门锁】";
             ((Switch)findViewById(R.id.lock_setdefault)).setChecked(true);
@@ -66,6 +85,7 @@ public class lockInfoActivity extends AppCompatActivity {
     }
 
     public void deleteLock(View view) {
+        if(noLock)return;
         AlertUtils.show(this, "确认删除", "您确定要删除这个门锁", new AlertUtils.callbacker() {
             @Override
             public void select(int id) {
@@ -88,6 +108,14 @@ public class lockInfoActivity extends AppCompatActivity {
         lockList = lockManageUtil.getAll();
         List<String> nameList = new ArrayList<>();
         lockList.forEach(lock -> nameList.add(lock.label));
+
+        if(nameList.size()==0){
+            nameList.add("未添加门锁");
+            lockList.add(new Lock("未添加门锁","未添加门锁","未添加门锁","未添加门锁","未添加门锁"));
+            noLock=true;
+        }else{
+            noLock=false;
+        }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, nameList);
         ((Spinner) findViewById(R.id.spinner_lockinfo)).setAdapter(adapter);
         ((Spinner) findViewById(R.id.spinner_lockinfo)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -107,6 +135,7 @@ public class lockInfoActivity extends AppCompatActivity {
 
 
     public void shareLock(View view) {
+        if(noLock)return;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("危险操作提醒");
         builder.setMessage("警告！您正在执行一项非常危险的操作！\n分享您的门锁信息这一行为是不可逆的，门锁的保密数据理论上会伴随一个账号从创建到注销，一旦数据被获取，将会是安全数据的永久性泄露。\n您只应该于您非常非常信任的人或者您自己的其他设备线下共享该信息。\n确定要执行该操作吗？");
@@ -161,15 +190,16 @@ public class lockInfoActivity extends AppCompatActivity {
     }
 
     public void createNFC(View view){
+        if(noLock)return;
         Intent in = new Intent(this,NfcActivity.class);
         in.setAction("cc.xypp.yunmeiui.nfc");
         Lock tmp = new Lock(currentLock.toString());
-        tmp.D_SEC="";
-        tmp.D_Mac="";
+        tmp.removeSec();
         in.setData(Uri.parse(tmp.toString()));
         startActivity(in);
     }
     public void setDefault(View view){
+        if(noLock)return;
         if(((Switch)findViewById(R.id.lock_setdefault)).isChecked()){
             lockManageUtil.setDef(currentLock);
             defaultLock = currentLock;

@@ -38,6 +38,7 @@ public class UnlockService {
         public abstract void setpss(int pss, String tip, boolean toast);
         public abstract void start();
         public abstract void end();
+        public abstract void successed();
     }
     private final String[] permission = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION};
@@ -242,6 +243,7 @@ public class UnlockService {
                                 lockManageUtil.setMac(currentLock.label, currentLock.D_Mac);
                             }
                             callback.end();
+                            callback.successed();
                         } else {
                             callback.setpss(75, "正在发送数据");
                         }

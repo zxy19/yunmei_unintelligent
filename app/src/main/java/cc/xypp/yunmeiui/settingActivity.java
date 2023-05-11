@@ -22,7 +22,11 @@ import java.util.List;
 import java.util.Map;
 
 import cc.xypp.yunmeiui.eneity.Lock;
+import cc.xypp.yunmeiui.eneity.User;
+import cc.xypp.yunmeiui.utils.AlertUtils;
 import cc.xypp.yunmeiui.utils.SecureStorage;
+import cc.xypp.yunmeiui.utils.ToastUtil;
+import cc.xypp.yunmeiui.utils.UserUtils;
 
 public class settingActivity extends AppCompatActivity {
     private final List<Lock> locks = new ArrayList<>();
@@ -41,6 +45,10 @@ public class settingActivity extends AppCompatActivity {
         ((Switch) findViewById(R.id.quickConn)).setChecked(sp.getBoolean("quickCon", true));
         ((Switch) findViewById(R.id.autoConn)).setChecked(sp.getBoolean("autoCon", false));
         ((Switch) findViewById(R.id.autoExit)).setChecked(sp.getBoolean("autoExit", false));
+        ((Switch) findViewById(R.id.autocode)).setChecked(sp.getBoolean("autoCode", false));
+        ((Switch) findViewById(R.id.always_code)).setChecked(sp.getBoolean("alwaysCode", false));
+        ((Switch) findViewById(R.id.hide_sign)).setChecked(sp.getBoolean("hideSign", false));
+        ((Switch) findViewById(R.id.hide_code)).setChecked(sp.getBoolean("hideCode", false));
         switch (sp.getString("sigLoc", "ask")) {
             case "ask":
                 ((RadioButton) findViewById(R.id.sigLocOpt_ask)).setChecked(true);
@@ -145,12 +153,25 @@ public class settingActivity extends AppCompatActivity {
     }
 
     public void clickClearInfo(View view) {
-        Map<String,String> sallDat = new HashMap<>();
-        sallDat.put("loginUsr","");
-        sallDat.put("loginPsw", "");
-        sallDat.put("schoolNo","");
-        sallDat.put("lockNo", "");
-        secureStorage.setVal(sallDat);
+        UserUtils userUtils = new UserUtils(this);
+        List<User> userList = userUtils.getAll();
+        if(userList.size()==0){
+            ToastUtil.show(this,"无保存的账号");
+        }else{
+            List<String> nameList = new ArrayList<>();
+            userList.forEach(user -> nameList.add(user.username));
+            AlertUtils.showList(this, "选择用户", nameList, new AlertUtils.callbacker() {
+                @Override
+                public void select(int id) {
+                    userUtils.remove(userList.get(id));
+                }
+
+                @Override
+                public void cancel() {
+
+                }
+            });
+        }
     }
 
     public void ClickSigLoc(View view) {
@@ -197,5 +218,29 @@ public class settingActivity extends AppCompatActivity {
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    public void edit_hideSign(View view) {
+        SharedPreferences.Editor a = sp.edit();
+        a.putBoolean("hideSign", ((Switch) findViewById(R.id.hide_sign)).isChecked());
+        a.apply();
+    }
+
+    public void edit_alwaysCode(View view) {
+        SharedPreferences.Editor a = sp.edit();
+        a.putBoolean("alwaysCode", ((Switch) findViewById(R.id.always_code)).isChecked());
+        a.apply();
+    }
+
+    public void edit_autocode(View view) {
+        SharedPreferences.Editor a = sp.edit();
+        a.putBoolean("autoCode", ((Switch) findViewById(R.id.autocode)).isChecked());
+        a.apply();
+    }
+
+    public void edit_hideCode(View view){
+        SharedPreferences.Editor a = sp.edit();
+        a.putBoolean("hideCode", ((Switch) findViewById(R.id.hide_code)).isChecked());
+        a.apply();
     }
 }

@@ -42,7 +42,6 @@ public class CircleProgress extends View {
 
     public CircleProgress(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        System.out.println("DRAW_RR");
         _paint = new Paint();
         _paint.setAntiAlias(true);
         _rectF = new RectF();

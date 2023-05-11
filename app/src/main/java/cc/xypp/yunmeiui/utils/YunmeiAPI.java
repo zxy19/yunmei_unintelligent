@@ -11,6 +11,8 @@ import java.util.Map;
 import cc.xypp.yunmeiui.eneity.Lock;
 
 public class YunmeiAPI {
+    private final String usernameMD5;
+
     public static class Schools {
         public String schoolNo;
         public String schoolName;
@@ -42,6 +44,9 @@ public class YunmeiAPI {
                 currentLock.D_CHAR = lockRes.getString("lockCharacterUuid");
                 currentLock.D_SERV = lockRes.getString("lockServiceUuid");
                 currentLock.D_Mac = lockRes.getString("lockNo");
+                currentLock.lockNo = lockRes.getString("lockNo");
+                currentLock.schoolNo = schoolNo;
+                currentLock.username = usernameMD5;
                 locks.add(currentLock);
             }catch (Exception ignored){}
         }
@@ -84,6 +89,7 @@ public class YunmeiAPI {
                 school.token=schoolRes.getString("token");
                 schools.add(school);
             }
+            usernameMD5 = MD5Utils.stringToMD5(username);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("未知错误");

@@ -25,9 +25,7 @@ public class addLockActivity extends AppCompatActivity {
         lockManageUtil = new LockManageUtil(this);
 
         Intent intent = getIntent();
-        System.out.println(intent.getDataString());
         String Url=intent.getDataString();
-        System.out.println(Url);
         toAdd = new Lock(Url);
         if(toAdd.label.equals("account")){
             toAdd.label=getLockNameAuto();

@@ -61,7 +61,6 @@ public class HttpClient4 {
             while ((line = in.readLine()) != null) {
                 result.append(line);
             }
-            System.out.println(result.toString());
         }catch (Exception e) {
             e.printStackTrace();
         }

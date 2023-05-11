@@ -32,7 +32,7 @@
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:scheme="yunmei"
+                <data android:scheme="yunmeiui"
                     android:host="lock_id"/>
             </intent-filter>
             <meta-data android:name="android.nfc.action.TECH_DISCOVERED"
@@ -52,7 +52,7 @@
             <intent-filter>
                 <data
                     android:host="lock_info"
-                    android:scheme="yunmei" />
+                    android:scheme="yunmeiui" />
 
                 <action android:name="android.intent.action.VIEW" />
 

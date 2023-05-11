@@ -16,16 +16,21 @@ import java.util.List;
 import java.util.Map;
 
 import cc.xypp.yunmeiui.eneity.Lock;
+import cc.xypp.yunmeiui.eneity.User;
 import cc.xypp.yunmeiui.utils.AlertUtils;
 import cc.xypp.yunmeiui.utils.MD5Utils;
 import cc.xypp.yunmeiui.utils.SecureStorage;
 import cc.xypp.yunmeiui.utils.ToastUtil;
+import cc.xypp.yunmeiui.utils.UserUtils;
 import cc.xypp.yunmeiui.utils.YunmeiAPI;
 
 public class loginActivity extends AppCompatActivity {
     private Activity context;
     private String stored;
     private SecureStorage secureStorage;
+    User currentUser;
+    UserUtils userUtils;
+    List<User> userList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,24 +38,43 @@ public class loginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         secureStorage = new SecureStorage(context);
-
-        ((EditText) findViewById(R.id.ipt_phone)).setText(secureStorage.getVal("loginUsr", ""));
-        ((EditText) findViewById(R.id.ipt_pasw)).setText(stored = secureStorage.getVal("loginPsw", ""));
+        userUtils = new UserUtils(context);
+        userList = userUtils.getAll();
+        if(userList.size()>0){
+            currentUser = userList.get(0);
+        }else {
+            currentUser = new User();
+        }
+        setCurrentUser(currentUser);
     }
+    private void setCurrentUser(User currentUser){
+        this.currentUser = currentUser;
+        ((EditText) findViewById(R.id.ipt_pasw)).setText(stored = currentUser.passwordMD5);
+        ((EditText) findViewById(R.id.ipt_phone)).setText(currentUser.username);
+    }
+    public void use_saved(View view){
+        List<String> nameList = new ArrayList<>();
+        userList.forEach(user -> nameList.add(user.username));
+        AlertUtils.showList(context, "选择用户", nameList, new AlertUtils.callbacker() {
+            @Override
+            public void select(int id) {
+                setCurrentUser(userList.get(id));
+            }
 
+            @Override
+            public void cancel() {
+
+            }
+        });
+    }
     public void doLoginClick(View view) {
         new Thread(login).start();
-    }
-
-    public void InfoClickE(View view) {
-        startActivity(new Intent(this, lockInfoActivity.class));
     }
 
     private void toast(String tip) {
         runOnUiThread(() -> {
             ToastUtil.show(this, tip);
         });
-
     }
 
     Runnable login = new Runnable() {
@@ -76,9 +100,7 @@ public class loginActivity extends AppCompatActivity {
                     toast("账号不属于任何一所学校，请检查后重新添加");
                     return;
                 }else if(api.schools.size()==1){
-                    if(saveCurrent) {
-                        save_schoolNo = api.schools.get(0).schoolNo;
-                    }
+                    save_schoolNo = api.schools.get(0).schoolNo;
                     api.setSchool(0);
                     afterSchoolSelect(api);
                 } else {
@@ -88,10 +110,7 @@ public class loginActivity extends AppCompatActivity {
                         @Override
                         public void select(int id) {
                             api.setSchool(id);
-                            if (saveCurrent) {
-                                save_schoolNo = api.schools.get(id).schoolNo;
-                            }
-
+                            save_schoolNo = api.schools.get(id).schoolNo;
                             new Thread(() -> afterSchoolSelect(api)).start();
                         }
 
@@ -117,18 +136,14 @@ public class loginActivity extends AppCompatActivity {
                     toast("当前账号不存在任何门锁");
                 } else if (locks.size() == 1) {
                     addLock(locks.get(0));
-                    if (saveCurrent) {
-                        save_LockNo = locks.get(0).D_Mac;
-                    }
+                    save_LockNo = locks.get(0).D_Mac;
                 } else {
                     List<String> lockNames = new ArrayList<>();
                     locks.forEach(lock -> lockNames.add(lock.label));
                     AlertUtils.showList(context, "选择要添加的门锁", lockNames, new AlertUtils.callbacker() {
                         @Override
                         public void select(int id) {
-                            if (saveCurrent) {
-                                save_LockNo = locks.get(id).D_Mac;
-                            }
+                            save_LockNo = locks.get(id).D_Mac;
                             addLock(locks.get(id));
                         }
 
@@ -148,12 +163,8 @@ public class loginActivity extends AppCompatActivity {
 
         private void addLock(Lock lock) {
             if (saveCurrent) {
-                Map<String, String> sallDat = new HashMap<>();
-                sallDat.put("loginUsr", userName);
-                sallDat.put("loginPsw", pwc);
-                sallDat.put("schoolNo", save_schoolNo);
-                sallDat.put("lockNo", save_LockNo);
-                secureStorage.setVal(sallDat);
+                User user = new User(userName,pwc);
+                userUtils.add(user);
             }
             toast("门锁添加完成");
             Intent i = new Intent(context, addLockActivity.class);

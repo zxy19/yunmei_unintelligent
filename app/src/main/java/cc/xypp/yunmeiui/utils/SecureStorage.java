@@ -22,7 +22,6 @@ public class SecureStorage {
                     EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
-            System.out.println(tssp.getAll());
         } catch (Exception e) {
             tssp = null;
             e.printStackTrace();
