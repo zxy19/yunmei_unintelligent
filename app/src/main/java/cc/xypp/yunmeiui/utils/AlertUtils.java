@@ -3,12 +3,17 @@ package cc.xypp.yunmeiui.utils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.widget.EditText;
 
 import java.util.List;
 
 public class AlertUtils {
     static public abstract class callbacker{
         public abstract void select(int id);
+        public abstract void cancel();
+    }
+    static public abstract class callbacker_Str{
+        public abstract void select(String val);
         public abstract void cancel();
     }
     static public void showList(Activity context, String title, List<String> opt, callbacker callback){
@@ -47,5 +52,24 @@ public class AlertUtils {
             androidx.appcompat.app.AlertDialog dialog = builder.create();
             dialog.show();
         });
+    }
+    static public void input(Activity context,String title,callbacker_Str callbacker){
+        final EditText input = new EditText(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("请输入")
+            .setView(input)
+            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    String inputString = input.getText().toString();
+                    callbacker.select(inputString);
+                }
+            })
+            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    callbacker.cancel();
+                }
+            })
+            .setNegativeButton("取消", null)
+            .show();
     }
 }

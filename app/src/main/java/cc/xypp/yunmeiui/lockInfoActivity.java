@@ -2,11 +2,19 @@ package cc.xypp.yunmeiui;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.pm.ShortcutInfoCompat;
+import androidx.core.content.pm.ShortcutManagerCompat;
+import androidx.core.graphics.drawable.IconCompat;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
+import android.graphics.drawable.Icon;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,6 +24,8 @@ import android.widget.Spinner;
 import android.widget.Switch;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,6 +33,7 @@ import cc.xypp.yunmeiui.eneity.Lock;
 import cc.xypp.yunmeiui.utils.AlertUtils;
 import cc.xypp.yunmeiui.utils.LockManageUtil;
 import cc.xypp.yunmeiui.utils.SecureStorage;
+import cc.xypp.yunmeiui.utils.ToastUtil;
 import cc.xypp.yunmeiui.utils.UserUtils;
 
 public class lockInfoActivity extends AppCompatActivity {
@@ -102,7 +113,25 @@ public class lockInfoActivity extends AppCompatActivity {
         });
 
     }
+    public void startDebug(View view){
+        if(noLock)return;
+        AlertUtils.show(this, "打开调试程序", "警告：调试程序中，您可以直接对门锁发送任何指令。这其中的指令均由云莓智能软件提取，但是并未进行测试。发送指令可能导致包括但不限于以下后果：\n\n门锁损坏\n门锁失去正常功能\n被管理员制裁\n\n您确定要打开调试界面吗？",
+                new AlertUtils.callbacker() {
+                    @Override
+                    public void select(int id) {
+                        Intent intent = new Intent(ctx, lockDebug.class);
+                        intent.setData(Uri.parse(currentLock.toString()));
+                        intent.setAction("cc.xypp.yunmeiui.debug");
+                        startActivity(intent);
+                    }
 
+                    @Override
+                    public void cancel() {
+
+                    }
+                });
+
+    }
     private void reloadLock() {
         ((EditText) findViewById(R.id.info)).setText("");
         lockList = lockManageUtil.getAll();
@@ -208,5 +237,35 @@ public class lockInfoActivity extends AppCompatActivity {
             defaultLock=null;
         }
         showLock(currentLock);
+    }
+    public void createShortcutClick(View view){
+        if(noLock)return;
+        if(!createShortcut(currentLock)){
+            ToastUtil.show(this,"创建失败");
+        }
+    }
+    public boolean createShortcut(Lock lock){
+        try {
+            if (ShortcutManagerCompat.isRequestPinShortcutSupported(this)) {
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.setData(Uri.parse(lock.toString()));
+                intent.setAction("cc.xypp.yunmeiui.unlock");
+
+                ShortcutInfoCompat shortcutInfo = new ShortcutInfoCompat.Builder(this, lock.label)
+                        .setIntent(intent)
+                        .setShortLabel(lock.label)
+                        .setLongLabel("开门：" + lock.label)
+                        .setIcon(IconCompat.createWithResource(this, R.drawable.ic_unlock))
+                        .build();
+
+                PendingIntent successCallback = PendingIntent.getBroadcast(this,  0,
+                        new Intent(/* broadcast intent */), PendingIntent.FLAG_IMMUTABLE);
+                ShortcutManagerCompat.requestPinShortcut(this, shortcutInfo, successCallback.getIntentSender());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }
