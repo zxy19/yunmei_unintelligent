@@ -20,6 +20,7 @@ import android.widget.Spinner;
 import com.clj.fastble.BleManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     SignService signService;
     private Boolean config_quickConnect;
     private Lock currentLock;
+    private Lock tmpLock = null;
     private boolean exitOnce = false;
     private boolean config_autoCode;
     private CodeService codeService;
@@ -97,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
             if (quick.equals("cc.xypp.yunmeiui.unlock")) {
                 String data = getIntent().getDataString();
                 if(data!=null && data.startsWith("yunmeiui://lock_info/")){
-                    currentLock = new Lock(data);
+                    tmpLock = currentLock = new Lock(data);
                     exitOnce = true;
                 }
                 //开门
@@ -133,14 +135,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void reloadLocks() {
         List<String> nameList = new ArrayList<>();
-
-        locks = lockManageUtil.getAll();
+        locks = new ArrayList<>();
+        locks.addAll(lockManageUtil.getAll());
         locks.forEach(lock -> nameList.add(lock.label));
-
         Lock def = lockManageUtil.getDef();
         if(def!=null){
             locks.add(0,def);
             nameList.add(0,def.label+"[默认]");
+        }
+        if(tmpLock!=null){
+            nameList.add(0,tmpLock.label+"[本次]");
+            locks.add(0,tmpLock);
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, nameList);
         ((Spinner) findViewById(R.id.lockSelector)).setAdapter(adapter);

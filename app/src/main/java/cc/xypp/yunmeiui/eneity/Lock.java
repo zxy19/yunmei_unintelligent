@@ -89,9 +89,9 @@ public class Lock implements Serializable {
     public String toString() {
         String body = label + "|" + D_Mac + "|" + D_CHAR + "|" + D_SERV + "|" + D_SEC+"|"+ username+"|"+ schoolNo+"|"+ lockNo+"|"+DATA_VER;
         if(D_SEC.equals("")){
-            return "yunmeiui://lock_id/"+Base64.getEncoder().encodeToString(body.getBytes());
+            return "https://yunmeiui.xypp.cc/#/lock_id/"+Base64.getEncoder().encodeToString(body.getBytes());
         }
-        return "yunmeiui://lock_info/"+Base64.getEncoder().encodeToString(body.getBytes());
+        return "https://yunmeiui.xypp.cc/#/lock_info/"+Base64.getEncoder().encodeToString(body.getBytes());
     }
 
 }

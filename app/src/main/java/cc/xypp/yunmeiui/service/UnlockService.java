@@ -166,6 +166,7 @@ public class UnlockService {
 
             @Override
             public void onScanFinished(BleDevice scanResult) {
+
                 // 扫描结束，结果即为扫描到的第一个符合扫描规则的BLE设备，如果为空表示未搜索到（主线程）
                 if (scanResult == null) {
                     callback.setpss(0, "设备未找到", true);
