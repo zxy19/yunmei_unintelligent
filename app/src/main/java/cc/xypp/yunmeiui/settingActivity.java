@@ -209,7 +209,7 @@ public class settingActivity extends AppCompatActivity {
                 Toast.makeText(this, "取消扫描", Toast.LENGTH_LONG).show();
             } else {
                 String c = result.getContents();
-                if (c.startsWith("yunmeiui://lock_info/")) {
+                if (c.startsWith("yunmeiui://lock_info/") || c.startsWith("https://yunmeiui.xypp.cc/#/lock_info/")) {
                     Intent i = new Intent(this, addLockActivity.class);
                     i.setData(Uri.parse(c));
                     startActivity(i);
