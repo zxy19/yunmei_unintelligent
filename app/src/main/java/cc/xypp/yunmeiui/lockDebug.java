@@ -104,7 +104,7 @@ public class lockDebug extends AppCompatActivity {
             hexString.append(String.format("%02X ", b));
             asciiString.append((char) b);
         }
-        return hexString.append("\n").append(asciiString).toString();
+        return hexString.append("\n").append(asciiString).append("\n").toString();
     }
 
     public void connectEvent(View view) {

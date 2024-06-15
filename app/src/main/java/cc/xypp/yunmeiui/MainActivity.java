@@ -2,12 +2,16 @@ package cc.xypp.yunmeiui;
 
 import static java.lang.Thread.sleep;
 
+import static cc.xypp.yunmeiui.utils.HexUtil.hex2String;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -16,8 +20,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.clj.fastble.BleManager;
+import com.clj.fastble.callback.BleNotifyCallback;
+import com.clj.fastble.exception.BleException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +40,7 @@ import cc.xypp.yunmeiui.utils.LockManageUtil;
 import cc.xypp.yunmeiui.utils.SecureStorage;
 import cc.xypp.yunmeiui.utils.ToastUtil;
 import cc.xypp.yunmeiui.utils.UserUtils;
+import cc.xypp.yunmeiui.utils.YunmeiAPI;
 import cc.xypp.yunmeiui.wigets.CircleProgress;
 
 public class MainActivity extends AppCompatActivity {
@@ -50,7 +58,10 @@ public class MainActivity extends AppCompatActivity {
     private Lock tmpLock = null;
     private boolean exitOnce = false;
     private boolean config_autoCode;
+    private boolean config_uploadResult;
     private CodeService codeService;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,24 +75,27 @@ public class MainActivity extends AppCompatActivity {
         }
         secureStorage = new SecureStorage(this);
         lockManageUtil = new LockManageUtil(this);
-        ((Button)findViewById(R.id.btn_getcode)).setText("获取开门密码\n[点击获取]");
+        ((Button) findViewById(R.id.btn_getcode)).setText("获取开门密码\n[点击获取]");
         sp = getSharedPreferences("storage", MODE_PRIVATE);
 
         boolean config_autoConnect = sp.getBoolean("autoCon", false);
         config_quickConnect = sp.getBoolean("quickCon", true);
         config_autoCode = sp.getBoolean("autoCode", false);
+        if (sp.getBoolean("forceOrientation", false)) {
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
 
-        if(sp.getBoolean("hideSign",false)){
+        if (sp.getBoolean("hideSign", false)) {
             Button sigBtn = findViewById(R.id.btn_sign);
             sigBtn.setWidth(0);
-            sigBtn.setLayoutParams(new LinearLayout.LayoutParams(0,0,0));
+            sigBtn.setLayoutParams(new LinearLayout.LayoutParams(0, 0, 0));
             sigBtn.setVisibility(View.INVISIBLE);
         }
-        if(sp.getBoolean("hideCode",false)){
+        if (sp.getBoolean("hideCode", false)) {
             Button codeBtn = findViewById(R.id.btn_getcode);
-            ((Button)findViewById(R.id.btn_sign)).setText("打卡");
+            ((Button) findViewById(R.id.btn_sign)).setText("打卡");
             codeBtn.setWidth(0);
-            codeBtn.setLayoutParams(new LinearLayout.LayoutParams(0,0,0));
+            codeBtn.setLayoutParams(new LinearLayout.LayoutParams(0, 0, 0));
             codeBtn.setVisibility(View.INVISIBLE);
         }
 
@@ -98,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         if (quick != null) {
             if (quick.equals("cc.xypp.yunmeiui.unlock")) {
                 String data = getIntent().getDataString();
-                if(data!=null && data.startsWith("yunmeiui://lock_info/")){
+                if (data != null && data.startsWith("yunmeiui://lock_info/")) {
                     tmpLock = currentLock = new Lock(data);
                     exitOnce = true;
                 }
@@ -110,15 +124,14 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        if (sp.getBoolean("firstrun",false)) {
+        if (sp.getBoolean("firstrun", false)) {
             findViewById(R.id.tip_f).setVisibility(View.INVISIBLE);
-        }else{
+        } else {
             SharedPreferences.Editor a = sp.edit();
-            a.putBoolean("firstrun",true);
+            a.putBoolean("firstrun", true);
             a.apply();
         }
     }
-
 
 
     @Override
@@ -139,27 +152,28 @@ public class MainActivity extends AppCompatActivity {
         locks.addAll(lockManageUtil.getAll());
         locks.forEach(lock -> nameList.add(lock.label));
         Lock def = lockManageUtil.getDef();
-        if(def!=null){
-            locks.add(0,def);
-            nameList.add(0,def.label+"[默认]");
+        if (def != null) {
+            locks.add(0, def);
+            nameList.add(0, def.label + "[默认]");
         }
-        if(tmpLock!=null){
-            nameList.add(0,tmpLock.label+"[本次]");
-            locks.add(0,tmpLock);
+        if (tmpLock != null) {
+            nameList.add(0, tmpLock.label + "[本次]");
+            locks.add(0, tmpLock);
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, nameList);
         ((Spinner) findViewById(R.id.lockSelector)).setAdapter(adapter);
-        if(locks.size() > 0){
+        if (locks.size() > 0) {
             currentLock = locks.get(0);
             ((Spinner) findViewById(R.id.lockSelector)).setSelection(0);
-        }else{
-            setPss(0,"欢迎使用，请点击右下角加号登录账号");
+        } else {
+            setPss(0, "欢迎使用，请点击右下角加号登录账号");
         }
         ((Spinner) findViewById(R.id.lockSelector)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 currentLock = locks.get(i);
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
                 currentLock = null;
@@ -192,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void openDoorClick(View view) {
         new Thread(this::openDoorPss).start();
-        if(config_autoCode){
+        if (config_autoCode) {
             new Thread(this::getCodePss).start();
         }
     }
@@ -215,32 +229,37 @@ public class MainActivity extends AppCompatActivity {
             btn_sign.setClickable(!ds);
         });
     }
-    public void clickGetCode(View view){
+
+    public void clickGetCode(View view) {
         new Thread(this::getCodePss).start();
     }
+
     private void openDoorPss() {
-        if (      currentLock == null
-                ||currentLock.D_CHAR == null
+        if (currentLock == null
+                || currentLock.D_CHAR == null
                 || currentLock.D_CHAR.equals("")
                 || currentLock.D_SERV == null
                 || currentLock.D_SERV.equals("")) {
             setPss(0, "当前门锁不可用，您可能需要登录或选择其他门锁", true);
         } else {
-            unlockService=new UnlockService(this, new UnlockService.Callback() {
+
+            unlockService = new UnlockService(this, new UnlockService.Callback() {
                 @Override
                 public void setpss(int pss, String tip, boolean toast) {
-                    setPss(pss,tip,toast);
+                    setPss(pss, tip, toast);
                 }
+
                 @Override
                 public void start() {
                     disableBtn(true);
                 }
+
                 @Override
                 public void end() {
                     disableBtn(false);
                     //自动退出判断
-                    if(exitOnce){
-                        runOnUiThread(()->{
+                    if (exitOnce) {
+                        runOnUiThread(() -> {
                             Handler handler = new Handler();
                             handler.postDelayed(() -> {
                                 finish();
@@ -251,10 +270,10 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void successed() {
-                    if(sp.getBoolean("autoExit",false)){
+                    if (sp.getBoolean("autoExit", false)) {
                         toast("开门完成，程序将自动退出");
                         //自动退出生效
-                        runOnUiThread(()->{
+                        runOnUiThread(() -> {
                             Handler handler = new Handler();
                             handler.postDelayed(() -> {
                                 finish();
@@ -263,21 +282,49 @@ public class MainActivity extends AppCompatActivity {
                         });
                     }
                 }
-            },currentLock,config_quickConnect);
+
+                @Override
+                public void result(byte[] data) {
+                    int posAB = -1, posAA = -1;
+                    for (int i = 0; i < data.length; i++) {
+                        if (data[i] == (byte) 0xAA) {
+                            posAA = i;
+                        } else if (data[i] == (byte) 0xAB) {
+                            posAB = i;
+                        }
+                    }
+//                    int res = Integer.parseInt(hex2String(data, 3, 2));
+//                    int res2 = Integer.parseInt(hex2String(data, 5, 1));
+                    int aa = posAA == -1 ? -1 : Integer.parseInt(hex2String(data, posAA + 1, 2));
+                    int ab = posAB == -1 ? -1 : Integer.parseInt(hex2String(data, posAB + 1, 2));
+                    int battery = aa;
+                    if (ab != -1) {
+                        battery = (int) Math.round(100.0 * (ab - 40) / 24);
+                    }
+
+                    String result = String.format("电量:%d%%", battery);
+                    ((TextView) findViewById(R.id.open_result)).setText(result);
+
+                    if(config_uploadResult){
+
+                    }
+                }
+            }, currentLock, config_quickConnect);
             unlockService.openDoorWork();
         }
     }
+
     private void signPss() {
         UserUtils userUtils = new UserUtils(context);
         User user = userUtils.getByNameMD5(currentLock.username);
-        if(user==null){
-            ToastUtil.show(context,"当前门锁的账号未保存");
+        if (user == null) {
+            ToastUtil.show(context, "当前门锁的账号未保存");
             return;
         }
-        signService = new SignService(context,currentLock,user, new SignService.Callback() {
+        signService = new SignService(context, currentLock, user, new SignService.Callback() {
             @Override
             public void setpss(int pss, String tip, boolean toast) {
-                setPss(pss,tip,toast);
+                setPss(pss, tip, toast);
             }
 
             @Override
@@ -292,42 +339,44 @@ public class MainActivity extends AppCompatActivity {
         });
         signService.signEve();
     }
-    private void getCodePss(){
+
+    private void getCodePss() {
         codeService = new CodeService(context, currentLock, new CodeService.Callback() {
             @Override
             public void setpss(int pss, String tip, boolean toast) {
-                runOnUiThread(()->((Button)findViewById(R.id.btn_getcode)).setText(String.format("获取开门密码\n[%s]", tip)));
+                runOnUiThread(() -> ((Button) findViewById(R.id.btn_getcode)).setText(String.format("获取开门密码\n[%s]", tip)));
 
             }
 
             @Override
             public void start() {
-                setpss(0,"登录",true);
-                runOnUiThread(()->((Button)findViewById(R.id.btn_getcode)).setEnabled(false));
+                setpss(0, "登录", true);
+                runOnUiThread(() -> ((Button) findViewById(R.id.btn_getcode)).setEnabled(false));
             }
 
             @Override
             public void end(String code) {
-                if(!Objects.equals(code, "")){
-                    setpss(100,code);
+                if (!Objects.equals(code, "")) {
+                    setpss(100, code);
                 }
-                runOnUiThread(()->((Button)findViewById(R.id.btn_getcode)).setEnabled(true));
+                runOnUiThread(() -> ((Button) findViewById(R.id.btn_getcode)).setEnabled(true));
             }
         });
         codeService.getCode();
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 100) {
             //蓝牙扫描相关权限
-            unlockService.onRequestPermissionsResult(requestCode,permissions,grantResults);
+            unlockService.onRequestPermissionsResult(requestCode, permissions, grantResults);
         } else if (requestCode == 105) {
             //蓝牙连接相关权限
-            unlockService.onRequestPermissionsResult(requestCode,permissions,grantResults);
+            unlockService.onRequestPermissionsResult(requestCode, permissions, grantResults);
         } else if (requestCode == 109) {
             //GPS相关权限
-            signService.onRequestPermissionsResult(requestCode,permissions,grantResults);
+            signService.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 

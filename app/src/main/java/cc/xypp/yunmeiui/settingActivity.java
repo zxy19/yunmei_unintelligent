@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.RadioButton;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -48,7 +50,14 @@ public class settingActivity extends AppCompatActivity {
         ((Switch) findViewById(R.id.autocode)).setChecked(sp.getBoolean("autoCode", false));
         ((Switch) findViewById(R.id.always_code)).setChecked(sp.getBoolean("alwaysCode", false));
         ((Switch) findViewById(R.id.hide_sign)).setChecked(sp.getBoolean("hideSign", false));
-        ((Switch) findViewById(R.id.hide_code)).setChecked(sp.getBoolean("hideCode", false));
+        ((Switch) findViewById(R.id.force_orientation)).setChecked(sp.getBoolean("forceOrientation", false));
+//        ((Switch) findViewById(R.id.attempt_upload)).setChecked(sp.getBoolean("attemptUpload", false));
+//        ((EditText) findViewById(R.id.record_object)).setText(sp.getString("recordObject", ""));
+//        if (sp.getBoolean("attemptUpload", false)) {
+//            findViewById(R.id.record_obj_label).setVisibility(View.GONE);
+//            findViewById(R.id.record_object).setVisibility(View.GONE);
+//            findViewById(R.id.record_obj_btn).setVisibility(View.GONE);
+//        }
         switch (sp.getString("sigLoc", "ask")) {
             case "ask":
                 ((RadioButton) findViewById(R.id.sigLocOpt_ask)).setChecked(true);
@@ -155,9 +164,9 @@ public class settingActivity extends AppCompatActivity {
     public void clickClearInfo(View view) {
         UserUtils userUtils = new UserUtils(this);
         List<User> userList = userUtils.getAll();
-        if(userList.size()==0){
-            ToastUtil.show(this,"无保存的账号");
-        }else{
+        if (userList.size() == 0) {
+            ToastUtil.show(this, "无保存的账号");
+        } else {
             List<String> nameList = new ArrayList<>();
             userList.forEach(user -> nameList.add(user.username));
             AlertUtils.showList(this, "选择用户", nameList, new AlertUtils.callbacker() {
@@ -188,11 +197,13 @@ public class settingActivity extends AppCompatActivity {
     public void clickCheckInfo(View view) {
         startActivity(new Intent(this, lockInfoActivity.class));
     }
+
     public void about(View view) {
         Uri uri = Uri.parse("https://yunmei.xypp.cc/");
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
     }
+
     public void scanQR(View view) {
         // 创建IntentIntegrator对象
         IntentIntegrator intentIntegrator = new IntentIntegrator(settingActivity.this);
@@ -238,9 +249,58 @@ public class settingActivity extends AppCompatActivity {
         a.apply();
     }
 
-    public void edit_hideCode(View view){
+    public void edit_hideCode(View view) {
         SharedPreferences.Editor a = sp.edit();
         a.putBoolean("hideCode", ((Switch) findViewById(R.id.hide_code)).isChecked());
         a.apply();
+    }
+
+    public void edit_forceOrientation(View view) {
+        SharedPreferences.Editor a = sp.edit();
+        a.putBoolean("forceOrientation", ((Switch) findViewById(R.id.force_orientation)).isChecked());
+        a.apply();
+    }
+
+    public void edit_attemptUpload(View view) {
+        if (!((Switch) findViewById(R.id.attempt_upload)).isChecked()) {
+            SharedPreferences.Editor a = sp.edit();
+            a.putBoolean("attemptUpload", false);
+            a.apply();
+            findViewById(R.id.record_obj_label).setVisibility(View.GONE);
+            findViewById(R.id.record_object).setVisibility(View.GONE);
+            findViewById(R.id.record_obj_btn).setVisibility(View.GONE);
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("不确定性功能提醒");
+        builder.setMessage("该功能将尝试向云莓智能服务器上报开锁结果，包含电量等信息\n当前版本不会获取您的个人信息，而是使用特定的信息固定上报。\n该功能未经过大量验证，可能导致问题，请谨慎使用。");
+        builder.setNeutralButton("放弃", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                ((Switch) findViewById(R.id.attempt_upload)).setChecked(false);
+                findViewById(R.id.record_obj_label).setVisibility(View.GONE);
+                findViewById(R.id.record_object).setVisibility(View.GONE);
+                findViewById(R.id.record_obj_btn).setVisibility(View.GONE);
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                SharedPreferences.Editor a = sp.edit();
+                a.putBoolean("attemptUpload", true);
+                a.apply();
+                findViewById(R.id.record_obj_label).setVisibility(View.VISIBLE);
+                findViewById(R.id.record_object).setVisibility(View.VISIBLE);
+                findViewById(R.id.record_obj_btn).setVisibility(View.VISIBLE);
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    public void btn_recordObj(View view) {
+        SharedPreferences.Editor a = sp.edit();
+        EditText b = findViewById(R.id.record_object);
+        a.putString("recordObj", b.getText().toString());
+        a.apply();
+        ToastUtil.show(this, "已保存");
     }
 }

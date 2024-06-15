@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat;
 
 import com.clj.fastble.BleManager;
 import com.clj.fastble.callback.BleGattCallback;
+import com.clj.fastble.callback.BleNotifyCallback;
 import com.clj.fastble.callback.BleScanAndConnectCallback;
 import com.clj.fastble.callback.BleWriteCallback;
 import com.clj.fastble.data.BleDevice;
@@ -27,19 +28,54 @@ import java.util.List;
 import java.util.UUID;
 
 import cc.xypp.yunmeiui.eneity.Lock;
+import cc.xypp.yunmeiui.lockDebug;
 import cc.xypp.yunmeiui.utils.LockManageUtil;
+import cc.xypp.yunmeiui.utils.ToastUtil;
 
 public class UnlockService {
 
-    public static abstract class Callback{
-        public void setpss(int pss, String tip){
-            setpss(pss,tip,false);
-        };
+    public static abstract class Callback {
+        public void setpss(int pss, String tip) {
+            setpss(pss, tip, false);
+        }
+
+        ;
+
         public abstract void setpss(int pss, String tip, boolean toast);
+
         public abstract void start();
+
         public abstract void end();
+
         public abstract void successed();
+
+        public abstract void result(byte[] data);
     }
+
+    private class bleNotifyCallback extends BleNotifyCallback {
+        Callback callback;
+
+        bleNotifyCallback(Callback _callback) {
+            super();
+            callback = _callback;
+        }
+
+        @Override
+        public void onNotifySuccess() {
+            callback.setpss(50, "连接成功");
+            sendMsg();
+        }
+
+        @Override
+        public void onNotifyFailure(BleException exception) {
+        }
+
+        @Override
+        public void onCharacteristicChanged(byte[] data) {
+            callback.result(data);
+        }
+    }
+
     private final String[] permission = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION};
 
@@ -49,10 +85,11 @@ public class UnlockService {
     private final Callback callback;
     private final Lock currentLock;
     private boolean quickConnect;
-    public UnlockService(Activity context,Callback _callback,Lock _currentLock,boolean _quickConnect){
+
+    public UnlockService(Activity context, Callback _callback, Lock _currentLock, boolean _quickConnect) {
         ctx = context;
-        callback=_callback;
-        currentLock=_currentLock;
+        callback = _callback;
+        currentLock = _currentLock;
         quickConnect = _quickConnect;
     }
 
@@ -108,9 +145,11 @@ public class UnlockService {
             scan();
         }
     }
-    public void stop(){
+
+    public void stop() {
 
     }
+
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == 100) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -171,7 +210,7 @@ public class UnlockService {
                 if (scanResult == null) {
                     callback.setpss(0, "设备未找到", true);
                     callback.end();
-                } else callback.setpss(40, "设备已找到");
+                } else callback.setpss(30, "设备已找到");
             }
 
             @Override
@@ -189,8 +228,8 @@ public class UnlockService {
             @Override
             public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
                 connectedDevice = bleDevice;
-                sendMsg();
-                callback.setpss(50, "连接成功");
+                callback.setpss(40, "连接成功");
+                BleManager.getInstance().notify(bleDevice, currentLock.D_SERV, currentLock.D_CHAR.replace("6E400002", "6E400003"), new bleNotifyCallback(callback));
             }
 
             @Override
@@ -209,15 +248,15 @@ public class UnlockService {
             @Override
             public void onConnectFail(BleDevice bleDevice, BleException exception) {
                 quickConnect = false;
-                callback.setpss(0,"快速连接失败，使用常规模式尝试");
+                callback.setpss(0, "快速连接失败，使用常规模式尝试");
                 scan();
             }
 
             @Override
             public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
                 connectedDevice = bleDevice;
-                callback.setpss(50, "连接成功");
-                sendMsg();
+                callback.setpss(40, "连接成功");
+                BleManager.getInstance().notify(bleDevice, currentLock.D_SERV, currentLock.D_CHAR.replace("6E400002", "6E400003"), new bleNotifyCallback(callback));
             }
 
             @Override
@@ -252,7 +291,7 @@ public class UnlockService {
 
                     @Override
                     public void onWriteFailure(BleException exception) {
-                        callback.setpss(0,"开门失败",true);
+                        callback.setpss(0, "开门失败", true);
                         callback.end();
                     }
                 });
