@@ -7,7 +7,6 @@ import static cc.xypp.yunmeiui.utils.HexUtil.hex2String;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,24 +22,20 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.clj.fastble.BleManager;
-import com.clj.fastble.callback.BleNotifyCallback;
-import com.clj.fastble.exception.BleException;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 import cc.xypp.yunmeiui.eneity.Lock;
 import cc.xypp.yunmeiui.eneity.User;
-import cc.xypp.yunmeiui.service.CodeService;
-import cc.xypp.yunmeiui.service.SignService;
-import cc.xypp.yunmeiui.service.UnlockService;
+import cc.xypp.yunmeiui.function.CodeService;
+import cc.xypp.yunmeiui.function.SignService;
+import cc.xypp.yunmeiui.function.UnlockService;
 import cc.xypp.yunmeiui.utils.LockManageUtil;
 import cc.xypp.yunmeiui.utils.SecureStorage;
 import cc.xypp.yunmeiui.utils.ToastUtil;
 import cc.xypp.yunmeiui.utils.UserUtils;
-import cc.xypp.yunmeiui.utils.YunmeiAPI;
 import cc.xypp.yunmeiui.wigets.CircleProgress;
 
 public class MainActivity extends AppCompatActivity {

@@ -51,13 +51,13 @@ public class settingActivity extends AppCompatActivity {
         ((Switch) findViewById(R.id.always_code)).setChecked(sp.getBoolean("alwaysCode", false));
         ((Switch) findViewById(R.id.hide_sign)).setChecked(sp.getBoolean("hideSign", false));
         ((Switch) findViewById(R.id.force_orientation)).setChecked(sp.getBoolean("forceOrientation", false));
-//        ((Switch) findViewById(R.id.attempt_upload)).setChecked(sp.getBoolean("attemptUpload", false));
-//        ((EditText) findViewById(R.id.record_object)).setText(sp.getString("recordObject", ""));
-//        if (sp.getBoolean("attemptUpload", false)) {
-//            findViewById(R.id.record_obj_label).setVisibility(View.GONE);
-//            findViewById(R.id.record_object).setVisibility(View.GONE);
-//            findViewById(R.id.record_obj_btn).setVisibility(View.GONE);
-//        }
+        ((Switch) findViewById(R.id.attempt_upload)).setChecked(sp.getBoolean("attemptUpload", false));
+        ((EditText) findViewById(R.id.record_object)).setText(sp.getString("recordObject", ""));
+        if (!sp.getBoolean("attemptUpload", false)) {
+            findViewById(R.id.record_obj_label).setVisibility(View.GONE);
+            findViewById(R.id.record_object).setVisibility(View.GONE);
+            findViewById(R.id.record_obj_btn).setVisibility(View.GONE);
+        }
         switch (sp.getString("sigLoc", "ask")) {
             case "ask":
                 ((RadioButton) findViewById(R.id.sigLocOpt_ask)).setChecked(true);
