@@ -1,15 +1,9 @@
-package cc.xypp.yunmeiui.service;
+package cc.xypp.yunmeiui.function;
 
 import static android.content.Context.MODE_PRIVATE;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
-
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import cc.xypp.yunmeiui.eneity.Lock;
 import cc.xypp.yunmeiui.eneity.User;
